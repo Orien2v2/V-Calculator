@@ -3,16 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ArchMetrics — Spatial Calculator</title>
+    <title>V Calculator — by Fzbk</title>
     <style>
         :root {
-            --bg-main: #f5f5f7;
-            --bg-card: rgba(255, 255, 255, 0.85);
-            --apple-blue: #0071e3;
-            --text-title: #1d1d1f;
-            --text-body: #86868b;
-            --border-light: rgba(0, 0, 0, 0.08);
+            /* V Calculator Branding - Professional Designer Palettes (Flat/Solid) */
+            --brand-title: #000000;
+            --brand-body: #666666;
+            --brand-accent: #0071e3; /* Classic Apple Blue, used sparingly for interaction */
+            
+            /* Workspace Identity Tones (Solid Pastels) - Minimalist & Distinct */
+            --tone-a-light: #effaf4; /* MINT: Calm, Focused (Flat) */
+            --tone-a-dark: #b5e3cc;
+            --tone-b-light: #fbf6f0; /* SAND/SAGE: Warm, Grounded (Flat) */
+            --tone-b-dark: #e8dbcd;
+            
+            /* Surface Tones */
+            --surface-background: #ffffff; /* We'll dynamicall change the BODY background to create depth */
+            --surface-glass: rgba(255, 255, 255, 0.72); /* Higher translucence for better effect */
+            
+            --border-light: rgba(0, 0, 0, 0.06);
+            --border-glass-glint: rgba(255, 255, 255, 0.8); /* Used for edge definition */
+            --shadow-subtle: 0 4px 16px rgba(0,0,0,0.03);
+            
+            /* Apple Effects */
             --glass-blur: blur(20px);
+            --transition-smooth: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); /* Apple-like easing */
         }
 
         * {
@@ -24,116 +39,144 @@
         }
 
         body {
-            background-color: var(--bg-main);
-            color: var(--text-title);
+            /* Initial background - clean depth */
+            background-color: var(--tone-a-light); /* Let the background have the pastel tone, allowing the glass to *float* */
+            color: var(--brand-title);
             padding: 0;
             display: flex;
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
+            transition: background-color 0.4s ease;
         }
 
         .app-container {
             width: 100%;
-            max-width: 1000px;
-            margin: 40px 20px;
+            max-width: 960px; /* Slimmer max-width for more centered premium feel */
+            margin: 60px 20px;
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 20px;
         }
 
         @media (max-width: 768px) {
-            .app-container { margin: 16px 10px; gap: 16px; }
+            .app-container { margin: 20px 10px; gap: 16px; }
         }
 
-        /* Apple Glassmorphism Card Style */
-        .glass-card {
-            background: var(--bg-card);
+        /* V CALCULATOR GLASS PANEL */
+        .glass-panel {
+            background-color: var(--surface-glass);
             backdrop-filter: var(--glass-blur);
             -webkit-backdrop-filter: var(--glass-blur);
             border: 1px solid var(--border-light);
-            border-radius: 18px;
-            padding: 32px;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
+            box-shadow: var(--shadow-subtle);
+            border-radius: 20px;
+            padding: 36px;
+            position: relative;
+        }
+
+        /* The signature Apple edge glint border */
+        .glass-panel::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: inherit;
+            border: 1px solid var(--border-glass-glint);
+            pointer-events: none;
+            z-index: 1;
         }
 
         @media (max-width: 768px) {
-            .glass-card { padding: 20px; }
+            .glass-panel { padding: 24px 18px; }
         }
 
-        /* LANDING PAGE VIEWS */
-        #landing-page {
-            display: flex;
-            flex-direction: column;
-            gap: 32px;
-        }
-
+        /* 1. BRANDING HERO SECTION (V Calculator) */
         .hero-section {
             text-align: center;
-            padding: 40px 0 20px 0;
+            padding: 40px 0;
+            position: relative;
         }
 
+        /* Special text style for "V Calculator" */
         .hero-section h1 {
-            font-size: 3rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            margin-bottom: 12px;
-            background: linear-gradient(180deg, #1d1d1f 0%, #434344 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 3.8rem;
+            font-weight: 800;
+            letter-spacing: -2px; /* Super tight designer spacing */
+            color: #000000;
+            line-height: 0.9;
+        }
+        
+        /* Specialized Title/V effect */
+        .hero-section h1 span.v-effect {
+            color: #000000;
+            display: inline-block;
+            margin-right: -4px; /* V special spacing */
         }
 
-        .hero-section p {
-            font-size: 1.2rem;
-            color: var(--text-body);
-            max-width: 500px;
-            margin: 0 auto;
-            line-height: 1.5;
+        .hero-section .subline {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--brand-body);
+            letter-spacing: -0.2px;
+            margin-bottom: 24px;
+        }
+
+        .hero-section .app-description {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #000;
+            letter-spacing: -0.3px;
         }
 
         @media (max-width: 768px) {
-            .hero-section h1 { font-size: 2.2rem; }
-            .hero-section p { font-size: 1rem; }
+            .hero-section h1 { font-size: 2.8rem; letter-spacing: -1.5px; }
+            .hero-section .subline { font-size: 1rem; }
+            .hero-section .app-description { font-size: 1.2rem; }
         }
 
-        /* Dashboard Overview Grid */
+        /* 2. DASHBOARD OVERVIEW GRID */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 20px;
         }
 
-        @media (max-width: 580px) {
+        @media (max-width: 600px) {
             .dashboard-grid { grid-template-columns: 1fr; }
         }
 
         .tower-card {
-            background: #ffffff;
+            background: #ffffff; /* Solid White Base for consistency */
             border: 1px solid var(--border-light);
-            border-radius: 16px;
+            border-radius: 18px;
             padding: 24px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
             cursor: pointer;
+            position: relative;
+            z-index: 2; /* Raise above background */
+            transition: var(--transition-smooth); /* Use refined transition */
         }
 
+        /* Apple Hover Lift and Glow (Flat Pastel used here) */
         .tower-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.04);
+            transform: scale(1.02); /* Refined Apple Lift */
+            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
         }
 
         .tower-card h3 {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 16px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 20px;
+            color: #000000;
         }
 
         .tower-stats {
             display: flex;
-            gap: 24px;
-            margin-bottom: 20px;
+            gap: 28px;
+            margin-bottom: 28px;
         }
 
         .stat-item {
@@ -142,39 +185,40 @@
         }
 
         .stat-label {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-body);
-            margin-bottom: 4px;
+            letter-spacing: 0.8px;
+            color: var(--brand-body);
+            margin-bottom: 6px;
         }
 
         .stat-value {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-title);
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #000000;
         }
 
-        .apple-btn {
+        .apple-action-btn {
             background-color: #f5f5f7;
-            color: var(--apple-blue);
+            color: var(--brand-accent);
             border: none;
-            padding: 10px 16px;
+            padding: 12px 20px;
             font-size: 0.9rem;
             font-weight: 600;
             border-radius: 20px;
             cursor: pointer;
             text-align: center;
-            transition: background 0.2s;
+            transition: var(--transition-smooth);
             align-self: flex-start;
         }
 
-        .tower-card:hover .apple-btn {
-            background-color: var(--apple-blue);
+        .tower-card:hover .apple-action-btn {
+            background-color: var(--brand-accent);
             color: #ffffff;
         }
 
-        /* CALCULATOR APP WORKSPACE */
+        /* 3. CALCULATOR WORKSPACE */
         #workspace-page {
             display: none;
             flex-direction: column;
@@ -186,14 +230,14 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--border-light);
-            padding-bottom: 16px;
+            padding-bottom: 18px;
         }
 
         .back-link {
-            color: var(--apple-blue);
+            color: var(--brand-accent);
             text-decoration: none;
             font-size: 0.95rem;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -201,16 +245,18 @@
         }
 
         .workspace-title {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #000000;
         }
 
-        /* Segmented Control Selector (Apple Style Tabs) */
+        /* Apple Segmented Control (Minimalist Tabs) */
         .segmented-control {
             display: flex;
-            background: rgba(118, 118, 128, 0.12);
+            background: rgba(118, 118, 128, 0.1);
             padding: 2px;
-            border-radius: 9px;
+            border-radius: 11px;
             width: 100%;
         }
 
@@ -218,68 +264,73 @@
             flex: 1;
             border: none;
             background: transparent;
-            padding: 8px;
+            padding: 10px;
             font-size: 0.9rem;
-            font-weight: 500;
-            border-radius: 7px;
+            font-weight: 600;
+            border-radius: 9px;
             cursor: pointer;
             outline: none;
             transition: all 0.15s ease;
-            color: var(--text-title);
+            color: #000000;
         }
 
         .segment-btn.active {
             background: #ffffff;
-            box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.12), 0px 3px 1px rgba(0, 0, 0, 0.04);
-            font-weight: 600;
+            box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
+            color: #000000;
         }
 
-        /* Responsive Matrix / Tables */
-        .table-scroll {
+        /* 4. WORKSPACE MATRIX / DATA GRIDS */
+        .table-wrapper {
             width: 100%;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
-            margin-top: 12px;
+            margin-top: 10px;
+            background: rgba(255,255,255,0.4);
+            border-radius: 14px;
+            border: 1px solid var(--border-light);
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.9rem;
-            min-width: 720px;
+            font-size: 0.95rem;
+            min-width: 780px;
         }
 
         th {
-            color: var(--text-body);
-            font-weight: 500;
-            padding: 12px 8px;
+            color: #000000;
+            font-weight: 600;
+            padding: 16px 12px;
             text-align: left;
             border-bottom: 1px solid var(--border-light);
             font-size: 0.85rem;
+            letter-spacing: 0.2px;
         }
 
         td {
-            padding: 10px 8px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-            color: var(--text-title);
+            padding: 12px 12px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+            color: #333333;
         }
 
-        .floor-label {
-            font-weight: 600;
-            color: #1d1d1f;
+        .floor-heading {
+            font-weight: 700;
+            color: #000000;
         }
 
-        /* Minimal Designer Inputs */
+        /* Apple Designer Inputs (No gradients) */
         input[type="number"] {
             width: 100%;
-            max-width: 110px;
-            padding: 6px 10px;
-            border: 1px solid rgba(0, 0, 0, 0.15);
-            border-radius: 8px;
-            font-size: 0.9rem;
+            max-width: 120px;
+            padding: 8px 12px;
+            border: 1px solid rgba(0, 0, 0, 0.12);
+            border-radius: 9px;
+            font-size: 0.95rem;
             outline: none;
             background: #ffffff;
-            transition: border-color 0.2s;
+            color: #000000;
+            transition: var(--transition-smooth);
             -moz-appearance: textfield;
         }
 
@@ -290,12 +341,13 @@
         }
 
         input[type="number"]:focus {
-            border-color: var(--apple-blue);
+            border-color: var(--brand-accent);
+            box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.1);
         }
 
-        .computed-val {
-            font-weight: 600;
-            color: #1d1d1f;
+        .matrix-total {
+            font-weight: 700;
+            color: #000000;
         }
 
         .panel-view {
@@ -306,17 +358,17 @@
             display: block;
         }
 
-        .action-footer {
+        .utility-footer {
             display: flex;
             justify-content: flex-end;
             margin-top: 10px;
         }
 
-        .clear-btn {
+        .danger-reset-btn {
             background: transparent;
             border: none;
-            color: #ff3b30;
-            font-size: 0.85rem;
+            color: #ff3b30; /* Apple Red */
+            font-size: 0.9rem;
             cursor: pointer;
             font-weight: 500;
         }
@@ -326,15 +378,14 @@
 
 <div class="app-container">
 
-    <!-- 1. APPLE STYLE LANDING PAGE -->
-    <div id="landing-page" class="glass-card">
+    <div id="landing-page" class="glass-panel">
         <div class="hero-section">
-            <h1>ArchMetrics</h1>
-            <p>A minimalist spatial matrix for floor evaluations and wall calculation workflows.</p>
+            <div class="subline">by Fzbk</div>
+            <h1>V Calculator</h1>
+            <div class="app-description">Calculating Spaces</div>
         </div>
 
         <div class="dashboard-grid">
-            <!-- Tower A Card -->
             <div class="tower-card" onclick="openWorkspace('towerA')">
                 <div>
                     <h3>Tower A</h3>
@@ -349,10 +400,9 @@
                         </div>
                     </div>
                 </div>
-                <button class="apple-btn">Open Matrix</button>
+                <button class="apple-action-btn">Open Matrix</button>
             </div>
 
-            <!-- Tower B Card -->
             <div class="tower-card" onclick="openWorkspace('towerB')">
                 <div>
                     <h3>Tower B</h3>
@@ -367,10 +417,9 @@
                         </div>
                     </div>
                 </div>
-                <button class="apple-btn">Open Matrix</button>
+                <button class="apple-action-btn">Open Matrix</button>
             </div>
 
-            <!-- Tower C Card -->
             <div class="tower-card" onclick="openWorkspace('towerC')">
                 <div>
                     <h3>Tower C</h3>
@@ -385,10 +434,9 @@
                         </div>
                     </div>
                 </div>
-                <button class="apple-btn">Open Matrix</button>
+                <button class="apple-action-btn">Open Matrix</button>
             </div>
 
-            <!-- Tower D Card -->
             <div class="tower-card" onclick="openWorkspace('towerD')">
                 <div>
                     <h3>Tower D</h3>
@@ -403,23 +451,20 @@
                         </div>
                     </div>
                 </div>
-                <button class="apple-btn">Open Matrix</button>
+                <button class="apple-action-btn">Open Matrix</button>
             </div>
         </div>
-        <div class="action-footer">
-            <button class="clear-btn" onclick="clearAllData(event)">Reset All Local Data</button>
+        <div class="utility-footer">
+            <button class="danger-reset-btn" onclick="clearAllData(event)">Reset Local Database</button>
         </div>
     </div>
 
-    <!-- 2. WORKING MATRIX WORKSPACE -->
-    <div id="workspace-page" class="glass-card">
+    <div id="workspace-page" class="glass-panel">
         <div class="workspace-header">
             <div class="back-link" onclick="showLandingPage()">← Dashboard</div>
             <div class="workspace-title">Data Entry Matrix</div>
-            <div style="width: 70px;"></div> <!-- visual spacer -->
-        </div>
+            <div style="width: 70px;"></div> </div>
 
-        <!-- Segmented Control Nav -->
         <div class="segmented-control">
             <button class="segment-btn" id="seg-towerA" onclick="switchTab('towerA')">Tower A</button>
             <button class="segment-btn" id="seg-towerB" onclick="switchTab('towerB')">Tower B</button>
@@ -427,9 +472,8 @@
             <button class="segment-btn" id="seg-towerD" onclick="switchTab('towerD')">Tower D</button>
         </div>
 
-        <!-- Dynamic Content Nodes -->
         <div id="panel-towerA" class="panel-view">
-            <div class="table-scroll">
+            <div class="table-wrapper">
                 <table>
                     <thead><tr><th>Floor</th><th>Zone</th><th>Floor Area (m²)</th><th>Wall Perimeter (mm)</th><th>Height (mm)</th><th>Elev. Area (m²)</th></tr></thead>
                     <tbody id="table-body-towerA"></tbody>
@@ -438,7 +482,7 @@
         </div>
 
         <div id="panel-towerB" class="panel-view">
-            <div class="table-scroll">
+            <div class="table-wrapper">
                 <table>
                     <thead><tr><th>Floor</th><th>Zone</th><th>Floor Area (m²)</th><th>Wall Perimeter (mm)</th><th>Height (mm)</th><th>Elev. Area (m²)</th></tr></thead>
                     <tbody id="table-body-towerB"></tbody>
@@ -447,7 +491,7 @@
         </div>
 
         <div id="panel-towerC" class="panel-view">
-            <div class="table-scroll">
+            <div class="table-wrapper">
                 <table>
                     <thead><tr><th>Floor</th><th>Zone</th><th>Floor Area (m²)</th><th>Wall Perimeter (mm)</th><th>Height (mm)</th><th>Elev. Area (m²)</th></tr></thead>
                     <tbody id="table-body-towerC"></tbody>
@@ -456,7 +500,7 @@
         </div>
 
         <div id="panel-towerD" class="panel-view">
-            <div class="table-scroll">
+            <div class="table-wrapper">
                 <table>
                     <thead><tr><th>Floor</th><th>Zone</th><th>Floor Area (m²)</th><th>Wall Perimeter (mm)</th><th>Height (mm)</th><th>Elev. Area (m²)</th></tr></thead>
                     <tbody id="table-body-towerD"></tbody>
@@ -468,7 +512,7 @@
 </div>
 
 <script>
-    // Structural layout array from source images
+    // Exact structural layout from images provided
     const structuralData = {
         towerA: [
             { floor: "Ground", zones: ["Lobby A1", "Lobby A2", "Lift Lobby A1/A2"] },
@@ -498,11 +542,11 @@
         ]
     };
 
-    // Main local application storage object
-    let db = JSON.parse(localStorage.getItem('ArchMetricsData')) || {};
+    // Load Local DB or generate defaults
+    let db = JSON.parse(localStorage.getItem('VCalculatorData_v2')) || {};
 
     function saveToStorage() {
-        localStorage.setItem('ArchMetricsData', JSON.stringify(db));
+        localStorage.setItem('VCalculatorData_v2', JSON.stringify(db));
         updateDashboardMetrics();
     }
 
@@ -518,7 +562,6 @@
                 group.zones.forEach((zone, index) => {
                     const rowId = `row-${cellCounter}`;
                     
-                    // Pull values from stored DB or defaults
                     if (!db[towerKey][rowId]) {
                         db[towerKey][rowId] = { floorArea: "", perimeter: "", height: "", elevArea: 0 };
                     }
@@ -527,7 +570,7 @@
                     const tr = document.createElement("tr");
 
                     const floorCell = (index === 0) 
-                        ? `<td class="floor-label" rowspan="${group.zones.length}">${group.floor}</td>` 
+                        ? `<td class="floor-heading" rowspan="${group.zones.length}">${group.floor}</td>` 
                         : "";
 
                     tr.innerHTML = `
@@ -536,7 +579,7 @@
                         <td><input type="number" step="any" placeholder="0" value="${record.floorArea || ''}" id="${towerKey}-${rowId}-fa" oninput="trackMetric('${towerKey}', '${rowId}')"></td>
                         <td><input type="number" step="any" placeholder="0" value="${record.perimeter || ''}" id="${towerKey}-${rowId}-p" oninput="trackMetric('${towerKey}', '${rowId}')"></td>
                         <td><input type="number" step="any" placeholder="0" value="${record.height || ''}" id="${towerKey}-${rowId}-h" oninput="trackMetric('${towerKey}', '${rowId}')"></td>
-                        <td class="computed-val" id="${towerKey}-${rowId}-output">${parseFloat(record.elevArea).toFixed(2) || '0.00'}</td>
+                        <td class="matrix-total" id="${towerKey}-${rowId}-output">${parseFloat(record.elevArea).toFixed(2) || '0.00'}</td>
                     `;
                     tbody.appendChild(tr);
                     cellCounter++;
@@ -553,6 +596,7 @@
 
         const pNum = parseFloat(p) || 0;
         const hNum = parseFloat(h) || 0;
+        // mm to m^2 (Div 1M)
         const computed = (pNum * hNum) / 1000000;
 
         db[towerKey][rowId] = {
@@ -583,7 +627,7 @@
         });
     }
 
-    // View router triggers
+    // Navigation and Identity Tone management
     function openWorkspace(towerKey) {
         document.getElementById("landing-page").style.display = "none";
         document.getElementById("workspace-page").style.display = "flex";
@@ -591,6 +635,8 @@
     }
 
     function showLandingPage() {
+        // Return to main Dashboard identity
+        document.body.style.backgroundColor = "var(--tone-a-light)"; /* Default Dashboard Depth */
         document.getElementById("workspace-page").style.display = "none";
         document.getElementById("landing-page").style.display = "flex";
     }
@@ -601,13 +647,19 @@
 
         document.getElementById(`panel-${towerKey}`).classList.add("active");
         document.getElementById(`seg-${towerKey}`).classList.add("active");
+
+        // Dynamic Identity Tone Assignment (Flat Pastels create depth for glass)
+        if (towerKey === "towerA") document.body.style.backgroundColor = "var(--tone-a-light)";
+        if (towerKey === "towerB") document.body.style.backgroundColor = "var(--tone-b-light)";
+        if (towerKey === "towerC") document.body.style.backgroundColor = "#faf0f3"; /* Rose Depth */
+        if (towerKey === "towerD") document.body.style.backgroundColor = "#f3f0fa"; /* Lavender Depth */
     }
 
     function clearAllData(e) {
         e.stopPropagation();
         if (confirm("Are you sure you want to clear all calculator data? This action cannot be undone.")) {
             db = {};
-            localStorage.removeItem('ArchMetricsData');
+            localStorage.removeItem('VCalculatorData_v2');
             initTables();
         }
     }
