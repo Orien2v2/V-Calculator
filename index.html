@@ -95,6 +95,7 @@
             border-radius: 24px;
             padding: 40px;
             position: relative;
+            width: 100%;
         }
 
         .glass-panel::before {
@@ -115,6 +116,7 @@
         .hero-section {
             text-align: center;
             padding: 40px 0;
+            width: 100%;
         }
 
         .hero-section h1 {
@@ -134,6 +136,7 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 20px;
+            width: 100%;
         }
 
         @media (max-width: 600px) {
@@ -376,19 +379,16 @@
 </head>
 <body>
 
-<!-- STICKY RUNNING WATERMARK -->
 <div class="sticky-watermark">Fz</div>
 
 <div class="app-container">
 
-    <!-- 1. DASHBOARD VIEW PANEL -->
     <div id="landing-page" class="glass-panel">
         <div class="hero-section">
             <h1>V Calculator</h1>
         </div>
 
         <div class="dashboard-grid">
-            <!-- Tower A -->
             <div class="tower-card card-a" onclick="openWorkspace('towerA')">
                 <div>
                     <h3>Tower A</h3>
@@ -406,7 +406,6 @@
                 <button class="apple-action-btn">Expand</button>
             </div>
 
-            <!-- Tower B -->
             <div class="tower-card card-b" onclick="openWorkspace('towerB')">
                 <div>
                     <h3>Tower B</h3>
@@ -424,7 +423,6 @@
                 <button class="apple-action-btn">Expand</button>
             </div>
 
-            <!-- Tower C -->
             <div class="tower-card card-c" onclick="openWorkspace('towerC')">
                 <div>
                     <h3>Tower C</h3>
@@ -442,7 +440,6 @@
                 <button class="apple-action-btn">Expand</button>
             </div>
 
-            <!-- Tower D -->
             <div class="tower-card card-d" onclick="openWorkspace('towerD')">
                 <div>
                     <h3>Tower D</h3>
@@ -466,7 +463,6 @@
         </div>
     </div>
 
-    <!-- 2. WORKSPACE MATRIX VIEW -->
     <div id="workspace-page" class="glass-panel">
         <div class="workspace-header">
             <div class="back-link" onclick="showLandingPage()">← Dashboard</div>
@@ -481,7 +477,6 @@
             <button class="segment-btn" id="seg-towerD" onclick="switchTab('towerD')">Tower D</button>
         </div>
 
-        <!-- Panels -->
         <div id="panel-towerA" class="panel-view">
             <div class="table-wrapper">
                 <table>
@@ -643,7 +638,7 @@
     function showLandingPage() {
         document.body.style.backgroundColor = "var(--tone-a-light)";
         document.getElementById("workspace-page").style.display = "none";
-        document.getElementById("landing-page").style.display = "flex";
+        document.getElementById("landing-page").style.display = "block"; // Reset standard layout behavior
     }
 
     function switchTab(towerKey) {
