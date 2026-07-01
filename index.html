@@ -3,149 +3,282 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tower Data Calculator</title>
+    <title>ArchMetrics — Spatial Calculator</title>
     <style>
         :root {
-            --bg-color: #f8f6f2;
-            --card-bg: #ffffff;
-            --primary: #8c8275;
-            --primary-light: #eaddcd;
-            --text-main: #4a443f;
-            --text-muted: #7c756e;
-            --border-color: #e6e1da;
-            --input-bg: #faf9f7;
+            --bg-main: #f5f5f7;
+            --bg-card: rgba(255, 255, 255, 0.85);
+            --apple-blue: #0071e3;
+            --text-title: #1d1d1f;
+            --text-body: #86868b;
+            --border-light: rgba(0, 0, 0, 0.08);
+            --glass-blur: blur(20px);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
+            -webkit-font-smoothing: antialiased;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            padding: 16px;
+            background-color: var(--bg-main);
+            color: var(--text-title);
+            padding: 0;
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            justify-content: center;
+            align-items: flex-start;
             min-height: 100vh;
         }
 
-        .container {
+        .app-container {
             width: 100%;
-            max-width: 1200px;
-            background: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-            overflow: hidden;
+            max-width: 1000px;
+            margin: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .app-container { margin: 16px 10px; gap: 16px; }
+        }
+
+        /* Apple Glassmorphism Card Style */
+        .glass-card {
+            background: var(--bg-card);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border-light);
+            border-radius: 18px;
+            padding: 32px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
+        }
+
+        @media (max-width: 768px) {
+            .glass-card { padding: 20px; }
+        }
+
+        /* LANDING PAGE VIEWS */
+        #landing-page {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .hero-section {
+            text-align: center;
+            padding: 40px 0 20px 0;
+        }
+
+        .hero-section h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 12px;
+            background: linear-gradient(180deg, #1d1d1f 0%, #434344 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-section p {
+            font-size: 1.2rem;
+            color: var(--text-body);
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            .hero-section h1 { font-size: 2.2rem; }
+            .hero-section p { font-size: 1rem; }
+        }
+
+        /* Dashboard Overview Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 580px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
+
+        .tower-card {
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+        }
+
+        .tower-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.04);
+        }
+
+        .tower-card h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .tower-stats {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
             display: flex;
             flex-direction: column;
         }
 
-        header {
-            background-color: var(--primary);
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-
-        header h1 {
-            font-size: 1.4rem;
-            font-weight: 600;
+        .stat-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
             letter-spacing: 0.5px;
+            color: var(--text-body);
+            margin-bottom: 4px;
         }
 
-        /* Tabs Navigation */
-        .tabs {
-            display: flex;
-            background-color: #f0ede7;
-            border-bottom: 1px solid var(--border-color);
-            overflow-x: auto;
-        }
-
-        .tab-btn {
-            flex: 1;
-            min-width: 80px;
-            padding: 14px 10px;
-            background: none;
-            border: none;
-            outline: none;
-            font-size: 0.95rem;
+        .stat-value {
+            font-size: 1.1rem;
             font-weight: 600;
-            color: var(--text-muted);
+            color: var(--text-title);
+        }
+
+        .apple-btn {
+            background-color: #f5f5f7;
+            color: var(--apple-blue);
+            border: none;
+            padding: 10px 16px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 20px;
             cursor: pointer;
-            transition: all 0.2s ease;
             text-align: center;
-            white-space: nowrap;
+            transition: background 0.2s;
+            align-self: flex-start;
         }
 
-        .tab-btn:not(:last-child) {
-            border-right: 1px solid var(--border-color);
+        .tower-card:hover .apple-btn {
+            background-color: var(--apple-blue);
+            color: #ffffff;
         }
 
-        .tab-btn.active {
-            background-color: var(--card-bg);
-            color: var(--primary);
-            border-bottom: 3px solid var(--primary);
+        /* CALCULATOR APP WORKSPACE */
+        #workspace-page {
+            display: none;
+            flex-direction: column;
+            gap: 24px;
         }
 
-        /* Table Area Wrapper for Mobile Responsiveness */
-        .table-container {
+        .workspace-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 16px;
+        }
+
+        .back-link {
+            color: var(--apple-blue);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .workspace-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        /* Segmented Control Selector (Apple Style Tabs) */
+        .segmented-control {
+            display: flex;
+            background: rgba(118, 118, 128, 0.12);
+            padding: 2px;
+            border-radius: 9px;
+            width: 100%;
+        }
+
+        .segment-btn {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 7px;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.15s ease;
+            color: var(--text-title);
+        }
+
+        .segment-btn.active {
+            background: #ffffff;
+            box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.12), 0px 3px 1px rgba(0, 0, 0, 0.04);
+            font-weight: 600;
+        }
+
+        /* Responsive Matrix / Tables */
+        .table-scroll {
             width: 100%;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
-            padding: 8px;
+            margin-top: 12px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            text-align: left;
             font-size: 0.9rem;
-            min-width: 750px; /* Ensures inputs don't squish unreadably on tiny screens */
+            min-width: 720px;
         }
 
         th {
-            background-color: var(--input-bg);
-            color: var(--text-main);
-            font-weight: 600;
-            padding: 12px 10px;
-            border-bottom: 2px solid var(--border-color);
+            color: var(--text-body);
+            font-weight: 500;
+            padding: 12px 8px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 0.85rem;
         }
 
         td {
-            padding: 8px 10px;
-            border-bottom: 1px solid var(--border-color);
-            vertical-align: middle;
+            padding: 10px 8px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+            color: var(--text-title);
         }
 
-        tr:hover {
-            background-color: #faf9f6;
-        }
-
-        .floor-cell {
+        .floor-label {
             font-weight: 600;
-            color: var(--primary);
-            width: 120px;
+            color: #1d1d1f;
         }
 
-        .zone-cell {
-            color: var(--text-main);
-            width: 180px;
-        }
-
-        /* Form Inputs */
+        /* Minimal Designer Inputs */
         input[type="number"] {
             width: 100%;
-            padding: 8px 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            background-color: var(--input-bg);
-            color: var(--text-main);
+            max-width: 110px;
+            padding: 6px 10px;
+            border: 1px solid rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
             font-size: 0.9rem;
             outline: none;
+            background: #ffffff;
             transition: border-color 0.2s;
             -moz-appearance: textfield;
         }
@@ -157,129 +290,186 @@
         }
 
         input[type="number"]:focus {
-            border-color: var(--primary);
-            background-color: #fff;
+            border-color: var(--apple-blue);
         }
 
-        /* Read-only output cell */
-        .output-cell {
+        .computed-val {
             font-weight: 600;
-            color: #556b2f;
-            padding-left: 10px;
+            color: #1d1d1f;
         }
 
-        .tower-panel {
+        .panel-view {
             display: none;
         }
 
-        .tower-panel.active {
+        .panel-view.active {
             display: block;
         }
 
-        footer {
-            padding: 15px;
-            text-align: center;
-            background-color: var(--input-bg);
-            border-top: 1px solid var(--border-color);
-            font-size: 0.8rem;
-            color: var(--text-muted);
+        .action-footer {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+
+        .clear-btn {
+            background: transparent;
+            border: none;
+            color: #ff3b30;
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-weight: 500;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <header>
-        <h1>Tower Dimension & Area Calculator</h1>
-    </header>
+<div class="app-container">
 
-    <div class="tabs">
-        <button class="tab-btn active" onclick="switchTower('towerA')">Tower A</button>
-        <button class="tab-btn" onclick="switchTower('towerB')">Tower B</button>
-        <button class="tab-btn" onclick="switchTower('towerC')">Tower C</button>
-        <button class="tab-btn" onclick="switchTower('towerD')">Tower D</button>
-    </div>
+    <!-- 1. APPLE STYLE LANDING PAGE -->
+    <div id="landing-page" class="glass-card">
+        <div class="hero-section">
+            <h1>ArchMetrics</h1>
+            <p>A minimalist spatial matrix for floor evaluations and wall calculation workflows.</p>
+        </div>
 
-    <div id="towerA" class="tower-panel active">
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Floor</th>
-                        <th>Zone</th>
-                        <th>Floor Area (m²)</th>
-                        <th>Wall Perimeter (mm)</th>
-                        <th>Height (mm)</th>
-                        <th>Elev. Area (m²)</th>
-                    </tr>
-                </thead>
-                <tbody id="body-towerA"></tbody>
-            </table>
+        <div class="dashboard-grid">
+            <!-- Tower A Card -->
+            <div class="tower-card" onclick="openWorkspace('towerA')">
+                <div>
+                    <h3>Tower A</h3>
+                    <div class="tower-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Floor Area</span>
+                            <span class="stat-value" id="dash-towerA-floor">0.00 m²</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Wall Area</span>
+                            <span class="stat-value" id="dash-towerA-wall">0.00 m²</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="apple-btn">Open Matrix</button>
+            </div>
+
+            <!-- Tower B Card -->
+            <div class="tower-card" onclick="openWorkspace('towerB')">
+                <div>
+                    <h3>Tower B</h3>
+                    <div class="tower-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Floor Area</span>
+                            <span class="stat-value" id="dash-towerB-floor">0.00 m²</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Wall Area</span>
+                            <span class="stat-value" id="dash-towerB-wall">0.00 m²</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="apple-btn">Open Matrix</button>
+            </div>
+
+            <!-- Tower C Card -->
+            <div class="tower-card" onclick="openWorkspace('towerC')">
+                <div>
+                    <h3>Tower C</h3>
+                    <div class="tower-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Floor Area</span>
+                            <span class="stat-value" id="dash-towerC-floor">0.00 m²</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Wall Area</span>
+                            <span class="stat-value" id="dash-towerC-wall">0.00 m²</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="apple-btn">Open Matrix</button>
+            </div>
+
+            <!-- Tower D Card -->
+            <div class="tower-card" onclick="openWorkspace('towerD')">
+                <div>
+                    <h3>Tower D</h3>
+                    <div class="tower-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Floor Area</span>
+                            <span class="stat-value" id="dash-towerD-floor">0.00 m²</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Wall Area</span>
+                            <span class="stat-value" id="dash-towerD-wall">0.00 m²</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="apple-btn">Open Matrix</button>
+            </div>
+        </div>
+        <div class="action-footer">
+            <button class="clear-btn" onclick="clearAllData(event)">Reset All Local Data</button>
         </div>
     </div>
 
-    <div id="towerB" class="tower-panel">
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Floor</th>
-                        <th>Zone</th>
-                        <th>Floor Area (m²)</th>
-                        <th>Wall Perimeter (mm)</th>
-                        <th>Height (mm)</th>
-                        <th>Elev. Area (m²)</th>
-                    </tr>
-                </thead>
-                <tbody id="body-towerB"></tbody>
-            </table>
+    <!-- 2. WORKING MATRIX WORKSPACE -->
+    <div id="workspace-page" class="glass-card">
+        <div class="workspace-header">
+            <div class="back-link" onclick="showLandingPage()">← Dashboard</div>
+            <div class="workspace-title">Data Entry Matrix</div>
+            <div style="width: 70px;"></div> <!-- visual spacer -->
+        </div>
+
+        <!-- Segmented Control Nav -->
+        <div class="segmented-control">
+            <button class="segment-btn" id="seg-towerA" onclick="switchTab('towerA')">Tower A</button>
+            <button class="segment-btn" id="seg-towerB" onclick="switchTab('towerB')">Tower B</button>
+            <button class="segment-btn" id="seg-towerC" onclick="switchTab('towerC')">Tower C</button>
+            <button class="segment-btn" id="seg-towerD" onclick="switchTab('towerD')">Tower D</button>
+        </div>
+
+        <!-- Dynamic Content Nodes -->
+        <div id="panel-towerA" class="panel-view">
+            <div class="table-scroll">
+                <table>
+                    <thead><tr><th>Floor</th><th>Zone</th><th>Floor Area (m²)</th><th>Wall Perimeter (mm)</th><th>Height (mm)</th><th>Elev. Area (m²)</th></tr></thead>
+                    <tbody id="table-body-towerA"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="panel-towerB" class="panel-view">
+            <div class="table-scroll">
+                <table>
+                    <thead><tr><th>Floor</th><th>Zone</th><th>Floor Area (m²)</th><th>Wall Perimeter (mm)</th><th>Height (mm)</th><th>Elev. Area (m²)</th></tr></thead>
+                    <tbody id="table-body-towerB"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="panel-towerC" class="panel-view">
+            <div class="table-scroll">
+                <table>
+                    <thead><tr><th>Floor</th><th>Zone</th><th>Floor Area (m²)</th><th>Wall Perimeter (mm)</th><th>Height (mm)</th><th>Elev. Area (m²)</th></tr></thead>
+                    <tbody id="table-body-towerC"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="panel-towerD" class="panel-view">
+            <div class="table-scroll">
+                <table>
+                    <thead><tr><th>Floor</th><th>Zone</th><th>Floor Area (m²)</th><th>Wall Perimeter (mm)</th><th>Height (mm)</th><th>Elev. Area (m²)</th></tr></thead>
+                    <tbody id="table-body-towerD"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-    <div id="towerC" class="tower-panel">
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Floor</th>
-                        <th>Zone</th>
-                        <th>Floor Area (m²)</th>
-                        <th>Wall Perimeter (mm)</th>
-                        <th>Height (mm)</th>
-                        <th>Elev. Area (m²)</th>
-                    </tr>
-                </thead>
-                <tbody id="body-towerC"></tbody>
-            </table>
-        </div>
-    </div>
-
-    <div id="towerD" class="tower-panel">
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Floor</th>
-                        <th>Zone</th>
-                        <th>Floor Area (m²)</th>
-                        <th>Wall Perimeter (mm)</th>
-                        <th>Height (mm)</th>
-                        <th>Elev. Area (m²)</th>
-                    </tr>
-                </thead>
-                <tbody id="body-towerD"></tbody>
-            </table>
-        </div>
-    </div>
-
-    <footer>
-        Data dynamically computed & saved locally within the session.
-    </footer>
 </div>
 
 <script>
-    // Exact structural data extracted from the attachments
-    const towerData = {
+    // Structural layout array from source images
+    const structuralData = {
         towerA: [
             { floor: "Ground", zones: ["Lobby A1", "Lobby A2", "Lift Lobby A1/A2"] },
             { floor: "Upper Ground", zones: ["Lounge A1", "Lounge A2", "Lift Lobby A1/A2"] },
@@ -308,89 +498,121 @@
         ]
     };
 
-    // Central state holding user inputs so it preserves state when shifting tabs
-    const appState = {};
+    // Main local application storage object
+    let db = JSON.parse(localStorage.getItem('ArchMetricsData')) || {};
 
-    // Generate table rows dynamically
-    function renderTables() {
-        Object.keys(towerData).forEach(towerKey => {
-            const tbody = document.getElementById(`body-${towerKey}`);
+    function saveToStorage() {
+        localStorage.setItem('ArchMetricsData', JSON.stringify(db));
+        updateDashboardMetrics();
+    }
+
+    function initTables() {
+        Object.keys(structuralData).forEach(towerKey => {
+            const tbody = document.getElementById(`table-body-${towerKey}`);
             tbody.innerHTML = "";
-            appState[towerKey] = {};
+            
+            if (!db[towerKey]) db[towerKey] = {};
 
-            let dynamicRowIndex = 0;
-
-            towerData[towerKey].forEach(floorGroup => {
-                floorGroup.zones.forEach((zone, zoneIdx) => {
-                    const rowId = `${towerKey}-row-${dynamicRowIndex}`;
+            let cellCounter = 0;
+            structuralData[towerKey].forEach(group => {
+                group.zones.forEach((zone, index) => {
+                    const rowId = `row-${cellCounter}`;
                     
-                    // Initialize state properties for this specific row
-                    appState[towerKey][rowId] = { floorArea: "", perimeter: "", height: "", elevArea: 0 };
-
+                    // Pull values from stored DB or defaults
+                    if (!db[towerKey][rowId]) {
+                        db[towerKey][rowId] = { floorArea: "", perimeter: "", height: "", elevArea: 0 };
+                    }
+                    
+                    const record = db[towerKey][rowId];
                     const tr = document.createElement("tr");
 
-                    // Merging floor column looks cleaner, but for robust mobile tables, individual tagging works cleanly
-                    const floorCellHTML = zoneIdx === 0 
-                        ? `<td class="floor-cell" rowspan="${floorGroup.zones.length}">${floorGroup.floor}</td>` 
+                    const floorCell = (index === 0) 
+                        ? `<td class="floor-label" rowspan="${group.zones.length}">${group.floor}</td>` 
                         : "";
 
                     tr.innerHTML = `
-                        ${floorCellHTML}
-                        <td class="zone-cell">${zone}</td>
-                        <td><input type="number" step="any" placeholder="0" id="${rowId}-floorArea" oninput="calculate('${towerKey}', '${rowId}')"></td>
-                        <td><input type="number" step="any" placeholder="0" id="${rowId}-perimeter" oninput="calculate('${towerKey}', '${rowId}')"></td>
-                        <td><input type="number" step="any" placeholder="0" id="${rowId}-height" oninput="calculate('${towerKey}', '${rowId}')"></td>
-                        <td class="output-cell" id="${rowId}-elevArea">0.00</td>
+                        ${floorCell}
+                        <td>${zone}</td>
+                        <td><input type="number" step="any" placeholder="0" value="${record.floorArea || ''}" id="${towerKey}-${rowId}-fa" oninput="trackMetric('${towerKey}', '${rowId}')"></td>
+                        <td><input type="number" step="any" placeholder="0" value="${record.perimeter || ''}" id="${towerKey}-${rowId}-p" oninput="trackMetric('${towerKey}', '${rowId}')"></td>
+                        <td><input type="number" step="any" placeholder="0" value="${record.height || ''}" id="${towerKey}-${rowId}-h" oninput="trackMetric('${towerKey}', '${rowId}')"></td>
+                        <td class="computed-val" id="${towerKey}-${rowId}-output">${parseFloat(record.elevArea).toFixed(2) || '0.00'}</td>
                     `;
-
                     tbody.appendChild(tr);
-                    dynamicRowIndex++;
+                    cellCounter++;
                 });
             });
         });
+        updateDashboardMetrics();
     }
 
-    // Handles live field parsing and conversions
-    function calculate(towerKey, rowId) {
-        const floorAreaInput = document.getElementById(`${rowId}-floorArea`).value;
-        const perimeterInput = document.getElementById(`${rowId}-perimeter`).value;
-        const heightInput = document.getElementById(`${rowId}-height`).value;
+    function trackMetric(towerKey, rowId) {
+        const fa = document.getElementById(`${towerKey}-${rowId}-fa`).value;
+        const p = document.getElementById(`${towerKey}-${rowId}-p`).value;
+        const h = document.getElementById(`${towerKey}-${rowId}-h`).value;
 
-        const floorArea = parseFloat(floorAreaInput) || 0;
-        const perimeter = parseFloat(perimeterInput) || 0;
-        const height = parseFloat(heightInput) || 0;
+        const pNum = parseFloat(p) || 0;
+        const hNum = parseFloat(h) || 0;
+        const computed = (pNum * hNum) / 1000000;
 
-        // Formula converting mm^2 to m^2 (Dividing by 1,000,000)
-        const elevArea = (perimeter * height) / 1000000;
-
-        // Save into app state
-        appState[towerKey][rowId] = {
-            floorArea: floorAreaInput,
-            perimeter: perimeterInput,
-            height: heightInput,
-            elevArea: elevArea
+        db[towerKey][rowId] = {
+            floorArea: fa,
+            perimeter: p,
+            height: h,
+            elevArea: computed
         };
 
-        // Update output field format
-        document.getElementById(`${rowId}-elevArea`).innerText = elevArea.toFixed(2);
+        document.getElementById(`${towerKey}-${rowId}-output`).innerText = computed.toFixed(2);
+        saveToStorage();
     }
 
-    // Tab switcher logic
-    function switchTower(towerId) {
-        // Toggle tab highlights
-        document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
-        event.target.classList.add("active");
+    function updateDashboardMetrics() {
+        Object.keys(structuralData).forEach(towerKey => {
+            let totalFloor = 0;
+            let totalWall = 0;
 
-        // Toggle visibility windows
-        document.querySelectorAll(".tower-panel").forEach(panel => panel.classList.remove("active"));
-        document.getElementById(towerId).classList.add("active");
+            if (db[towerKey]) {
+                Object.keys(db[towerKey]).forEach(rowId => {
+                    totalFloor += parseFloat(db[towerKey][rowId].floorArea) || 0;
+                    totalWall += parseFloat(db[towerKey][rowId].elevArea) || 0;
+                });
+            }
+
+            document.getElementById(`dash-${towerKey}-floor`).innerText = `${totalFloor.toFixed(2)} m²`;
+            document.getElementById(`dash-${towerKey}-wall`).innerText = `${totalWall.toFixed(2)} m²`;
+        });
     }
 
-    // Initialize application on load
-    window.onload = () => {
-        renderTables();
-    };
+    // View router triggers
+    function openWorkspace(towerKey) {
+        document.getElementById("landing-page").style.display = "none";
+        document.getElementById("workspace-page").style.display = "flex";
+        switchTab(towerKey);
+    }
+
+    function showLandingPage() {
+        document.getElementById("workspace-page").style.display = "none";
+        document.getElementById("landing-page").style.display = "flex";
+    }
+
+    function switchTab(towerKey) {
+        document.querySelectorAll(".panel-view").forEach(p => p.classList.remove("active"));
+        document.querySelectorAll(".segment-btn").forEach(b => b.classList.remove("active"));
+
+        document.getElementById(`panel-${towerKey}`).classList.add("active");
+        document.getElementById(`seg-${towerKey}`).classList.add("active");
+    }
+
+    function clearAllData(e) {
+        e.stopPropagation();
+        if (confirm("Are you sure you want to clear all calculator data? This action cannot be undone.")) {
+            db = {};
+            localStorage.removeItem('ArchMetricsData');
+            initTables();
+        }
+    }
+
+    window.onload = initTables;
 </script>
-
 </body>
 </html>
