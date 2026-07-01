@@ -3,31 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V Calculator — by Fzbk</title>
+    <title>V Calculator</title>
     <style>
         :root {
-            /* V Calculator Branding - Professional Designer Palettes (Flat/Solid) */
+            /* V Calculator Branding - Professional Designer Palettes */
             --brand-title: #000000;
             --brand-body: #666666;
-            --brand-accent: #0071e3; /* Classic Apple Blue, used sparingly for interaction */
+            --brand-accent: #0071e3; /* Classic Apple Blue */
             
-            /* Workspace Identity Tones (Solid Pastels) - Minimalist & Distinct */
-            --tone-a-light: #effaf4; /* MINT: Calm, Focused (Flat) */
-            --tone-a-dark: #b5e3cc;
-            --tone-b-light: #fbf6f0; /* SAND/SAGE: Warm, Grounded (Flat) */
-            --tone-b-dark: #e8dbcd;
+            /* Workspace Identity Tones (Solid Pastels with matching borders/glows) */
+            --tone-a-light: #effaf4; /* MINT */
+            --tone-a-accent: #a3dec0;
+            --tone-a-glow: rgba(163, 222, 192, 0.4);
+            
+            --tone-b-light: #fbf6f0; /* SAND/SAGE */
+            --tone-b-accent: #e2ceb8;
+            --tone-b-glow: rgba(226, 206, 184, 0.45);
+            
+            --tone-c-light: #faf0f3; /* ROSE */
+            --tone-c-accent: #f2cbd5;
+            --tone-c-glow: rgba(242, 203, 213, 0.45);
+            
+            --tone-d-light: #f3f0fa; /* LAVENDER */
+            --tone-d-accent: #d2c8edd8;
+            --tone-d-glow: rgba(210, 200, 237, 0.45);
             
             /* Surface Tones */
-            --surface-background: #ffffff; /* We'll dynamicall change the BODY background to create depth */
-            --surface-glass: rgba(255, 255, 255, 0.72); /* Higher translucence for better effect */
-            
-            --border-light: rgba(0, 0, 0, 0.06);
-            --border-glass-glint: rgba(255, 255, 255, 0.8); /* Used for edge definition */
-            --shadow-subtle: 0 4px 16px rgba(0,0,0,0.03);
+            --surface-glass: rgba(255, 255, 255, 0.78);
+            --border-light: rgba(0, 0, 0, 0.05);
+            --border-glass-glint: rgba(255, 255, 255, 0.9);
             
             /* Apple Effects */
             --glass-blur: blur(20px);
-            --transition-smooth: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); /* Apple-like easing */
+            --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         * {
@@ -39,20 +47,19 @@
         }
 
         body {
-            /* Initial background - clean depth */
-            background-color: var(--tone-a-light); /* Let the background have the pastel tone, allowing the glass to *float* */
+            background-color: var(--tone-a-light);
             color: var(--brand-title);
             padding: 0;
             display: flex;
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
-            transition: background-color 0.4s ease;
+            transition: background-color 0.5s ease;
         }
 
         .app-container {
             width: 100%;
-            max-width: 960px; /* Slimmer max-width for more centered premium feel */
+            max-width: 960px;
             margin: 60px 20px;
             display: flex;
             flex-direction: column;
@@ -63,19 +70,33 @@
             .app-container { margin: 20px 10px; gap: 16px; }
         }
 
+        /* PERSISTENT FLOATING WATERMARK */
+        .sticky-watermark {
+            position: fixed;
+            bottom: 16px;
+            left: 16px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: rgba(0, 0, 0, 0.22);
+            text-transform: uppercase;
+            z-index: 9999;
+            pointer-events: none;
+            user-select: none;
+        }
+
         /* V CALCULATOR GLASS PANEL */
         .glass-panel {
             background-color: var(--surface-glass);
             backdrop-filter: var(--glass-blur);
             -webkit-backdrop-filter: var(--glass-blur);
             border: 1px solid var(--border-light);
-            box-shadow: var(--shadow-subtle);
-            border-radius: 20px;
-            padding: 36px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.02);
+            border-radius: 24px;
+            padding: 40px;
             position: relative;
         }
 
-        /* The signature Apple edge glint border */
         .glass-panel::before {
             content: '';
             position: absolute;
@@ -90,51 +111,25 @@
             .glass-panel { padding: 24px 18px; }
         }
 
-        /* 1. BRANDING HERO SECTION (V Calculator) */
+        /* HERO SECTION */
         .hero-section {
             text-align: center;
             padding: 40px 0;
-            position: relative;
         }
 
-        /* Special text style for "V Calculator" */
         .hero-section h1 {
-            font-size: 3.8rem;
+            font-size: 4.2rem;
             font-weight: 800;
-            letter-spacing: -2px; /* Super tight designer spacing */
+            letter-spacing: -2.5px;
             color: #000000;
-            line-height: 0.9;
-        }
-        
-        /* Specialized Title/V effect */
-        .hero-section h1 span.v-effect {
-            color: #000000;
-            display: inline-block;
-            margin-right: -4px; /* V special spacing */
-        }
-
-        .hero-section .subline {
-            font-size: 1.1rem;
-            font-weight: 500;
-            color: var(--brand-body);
-            letter-spacing: -0.2px;
-            margin-bottom: 24px;
-        }
-
-        .hero-section .app-description {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: #000;
-            letter-spacing: -0.3px;
+            line-height: 1.0;
         }
 
         @media (max-width: 768px) {
-            .hero-section h1 { font-size: 2.8rem; letter-spacing: -1.5px; }
-            .hero-section .subline { font-size: 1rem; }
-            .hero-section .app-description { font-size: 1.2rem; }
+            .hero-section h1 { font-size: 3rem; letter-spacing: -1.5px; }
         }
 
-        /* 2. DASHBOARD OVERVIEW GRID */
+        /* DASHBOARD OVERVIEW GRID & COLOURED HIGHLIGHT CARDS */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -146,24 +141,29 @@
         }
 
         .tower-card {
-            background: #ffffff; /* Solid White Base for consistency */
-            border: 1px solid var(--border-light);
-            border-radius: 18px;
-            padding: 24px;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 26px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             cursor: pointer;
             position: relative;
-            z-index: 2; /* Raise above background */
-            transition: var(--transition-smooth); /* Use refined transition */
+            z-index: 2;
+            transition: var(--transition-smooth);
         }
 
-        /* Apple Hover Lift and Glow (Flat Pastel used here) */
-        .tower-card:hover {
-            transform: scale(1.02); /* Refined Apple Lift */
-            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
-        }
+        /* Card Custom Subtle Pastel Accents & Shadows */
+        .tower-card.card-a { border: 1px solid var(--tone-a-accent); box-shadow: 0 4px 20px var(--tone-a-glow); }
+        .tower-card.card-b { border: 1px solid var(--tone-b-accent); box-shadow: 0 4px 20px var(--tone-b-glow); }
+        .tower-card.card-c { border: 1px solid var(--tone-c-accent); box-shadow: 0 4px 20px var(--tone-c-glow); }
+        .tower-card.card-d { border: 1px solid var(--tone-d-accent); box-shadow: 0 4px 20px var(--tone-d-glow); }
+
+        /* Premium Expansion Glows on Interaction */
+        .tower-card.card-a:hover { transform: translateY(-4px); box-shadow: 0 20px 35px var(--tone-a-glow); }
+        .tower-card.card-b:hover { transform: translateY(-4px); box-shadow: 0 20px 35px var(--tone-b-glow); }
+        .tower-card.card-c:hover { transform: translateY(-4px); box-shadow: 0 20px 35px var(--tone-c-glow); }
+        .tower-card.card-d:hover { transform: translateY(-4px); box-shadow: 0 20px 35px var(--tone-d-glow); }
 
         .tower-card h3 {
             font-size: 1.6rem;
@@ -203,7 +203,7 @@
             background-color: #f5f5f7;
             color: var(--brand-accent);
             border: none;
-            padding: 12px 20px;
+            padding: 12px 22px;
             font-size: 0.9rem;
             font-weight: 600;
             border-radius: 20px;
@@ -213,12 +213,12 @@
             align-self: flex-start;
         }
 
-        .tower-card:hover .apple-action-btn {
-            background-color: var(--brand-accent);
-            color: #ffffff;
-        }
+        .tower-card.card-a:hover .apple-action-btn { background-color: #34c759; color: #fff; }
+        .tower-card.card-b:hover .apple-action-btn { background-color: #a2845e; color: #fff; }
+        .tower-card.card-c:hover .apple-action-btn { background-color: #ff2d55; color: #fff; }
+        .tower-card.card-d:hover .apple-action-btn { background-color: #5856d6; color: #fff; }
 
-        /* 3. CALCULATOR WORKSPACE */
+        /* CALCULATOR WORKSPACE */
         #workspace-page {
             display: none;
             flex-direction: column;
@@ -251,13 +251,14 @@
             color: #000000;
         }
 
-        /* Apple Segmented Control (Minimalist Tabs) */
+        /* Apple Segmented Controls with dynamic borders */
         .segmented-control {
             display: flex;
-            background: rgba(118, 118, 128, 0.1);
-            padding: 2px;
-            border-radius: 11px;
+            background: rgba(118, 118, 128, 0.08);
+            padding: 3px;
+            border-radius: 13px;
             width: 100%;
+            border: 1px solid rgba(0,0,0,0.02);
         }
 
         .segment-btn {
@@ -267,27 +268,27 @@
             padding: 10px;
             font-size: 0.9rem;
             font-weight: 600;
-            border-radius: 9px;
+            border-radius: 10px;
             cursor: pointer;
             outline: none;
-            transition: all 0.15s ease;
-            color: #000000;
+            transition: all 0.2s ease;
+            color: #444444;
         }
 
         .segment-btn.active {
             background: #ffffff;
-            box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.08);
             color: #000000;
         }
 
-        /* 4. WORKSPACE MATRIX / DATA GRIDS */
+        /* DYNAMIC WORKSPACE MATRIX ELEMENTS */
         .table-wrapper {
             width: 100%;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
             margin-top: 10px;
             background: rgba(255,255,255,0.4);
-            border-radius: 14px;
+            border-radius: 16px;
             border: 1px solid var(--border-light);
         }
 
@@ -310,8 +311,8 @@
 
         td {
             padding: 12px 12px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.03);
-            color: #333333;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.02);
+            color: #222222;
         }
 
         .floor-heading {
@@ -319,12 +320,11 @@
             color: #000000;
         }
 
-        /* Apple Designer Inputs (No gradients) */
         input[type="number"] {
             width: 100%;
             max-width: 120px;
             padding: 8px 12px;
-            border: 1px solid rgba(0, 0, 0, 0.12);
+            border: 1px solid rgba(0, 0, 0, 0.1);
             border-radius: 9px;
             font-size: 0.95rem;
             outline: none;
@@ -342,7 +342,7 @@
 
         input[type="number"]:focus {
             border-color: var(--brand-accent);
-            box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.1);
+            box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.12);
         }
 
         .matrix-total {
@@ -367,7 +367,7 @@
         .danger-reset-btn {
             background: transparent;
             border: none;
-            color: #ff3b30; /* Apple Red */
+            color: #ff3b30;
             font-size: 0.9rem;
             cursor: pointer;
             font-weight: 500;
@@ -376,17 +376,20 @@
 </head>
 <body>
 
+<!-- STICKY RUNNING WATERMARK -->
+<div class="sticky-watermark">Fz</div>
+
 <div class="app-container">
 
+    <!-- 1. DASHBOARD VIEW PANEL -->
     <div id="landing-page" class="glass-panel">
         <div class="hero-section">
-            <div class="subline">by Fzbk</div>
             <h1>V Calculator</h1>
-            <div class="app-description">Calculating Spaces</div>
         </div>
 
         <div class="dashboard-grid">
-            <div class="tower-card" onclick="openWorkspace('towerA')">
+            <!-- Tower A -->
+            <div class="tower-card card-a" onclick="openWorkspace('towerA')">
                 <div>
                     <h3>Tower A</h3>
                     <div class="tower-stats">
@@ -400,10 +403,11 @@
                         </div>
                     </div>
                 </div>
-                <button class="apple-action-btn">Open Matrix</button>
+                <button class="apple-action-btn">Expand</button>
             </div>
 
-            <div class="tower-card" onclick="openWorkspace('towerB')">
+            <!-- Tower B -->
+            <div class="tower-card card-b" onclick="openWorkspace('towerB')">
                 <div>
                     <h3>Tower B</h3>
                     <div class="tower-stats">
@@ -417,10 +421,11 @@
                         </div>
                     </div>
                 </div>
-                <button class="apple-action-btn">Open Matrix</button>
+                <button class="apple-action-btn">Expand</button>
             </div>
 
-            <div class="tower-card" onclick="openWorkspace('towerC')">
+            <!-- Tower C -->
+            <div class="tower-card card-c" onclick="openWorkspace('towerC')">
                 <div>
                     <h3>Tower C</h3>
                     <div class="tower-stats">
@@ -434,10 +439,11 @@
                         </div>
                     </div>
                 </div>
-                <button class="apple-action-btn">Open Matrix</button>
+                <button class="apple-action-btn">Expand</button>
             </div>
 
-            <div class="tower-card" onclick="openWorkspace('towerD')">
+            <!-- Tower D -->
+            <div class="tower-card card-d" onclick="openWorkspace('towerD')">
                 <div>
                     <h3>Tower D</h3>
                     <div class="tower-stats">
@@ -451,19 +457,22 @@
                         </div>
                     </div>
                 </div>
-                <button class="apple-action-btn">Open Matrix</button>
+                <button class="apple-action-btn">Expand</button>
             </div>
         </div>
+        
         <div class="utility-footer">
             <button class="danger-reset-btn" onclick="clearAllData(event)">Reset Local Database</button>
         </div>
     </div>
 
+    <!-- 2. WORKSPACE MATRIX VIEW -->
     <div id="workspace-page" class="glass-panel">
         <div class="workspace-header">
             <div class="back-link" onclick="showLandingPage()">← Dashboard</div>
             <div class="workspace-title">Data Entry Matrix</div>
-            <div style="width: 70px;"></div> </div>
+            <div style="width: 70px;"></div>
+        </div>
 
         <div class="segmented-control">
             <button class="segment-btn" id="seg-towerA" onclick="switchTab('towerA')">Tower A</button>
@@ -472,6 +481,7 @@
             <button class="segment-btn" id="seg-towerD" onclick="switchTab('towerD')">Tower D</button>
         </div>
 
+        <!-- Panels -->
         <div id="panel-towerA" class="panel-view">
             <div class="table-wrapper">
                 <table>
@@ -512,7 +522,6 @@
 </div>
 
 <script>
-    // Exact structural layout from images provided
     const structuralData = {
         towerA: [
             { floor: "Ground", zones: ["Lobby A1", "Lobby A2", "Lift Lobby A1/A2"] },
@@ -542,11 +551,10 @@
         ]
     };
 
-    // Load Local DB or generate defaults
-    let db = JSON.parse(localStorage.getItem('VCalculatorData_v2')) || {};
+    let db = JSON.parse(localStorage.getItem('VCalculatorData_v3')) || {};
 
     function saveToStorage() {
-        localStorage.setItem('VCalculatorData_v2', JSON.stringify(db));
+        localStorage.setItem('VCalculatorData_v3', JSON.stringify(db));
         updateDashboardMetrics();
     }
 
@@ -596,7 +604,6 @@
 
         const pNum = parseFloat(p) || 0;
         const hNum = parseFloat(h) || 0;
-        // mm to m^2 (Div 1M)
         const computed = (pNum * hNum) / 1000000;
 
         db[towerKey][rowId] = {
@@ -627,7 +634,6 @@
         });
     }
 
-    // Navigation and Identity Tone management
     function openWorkspace(towerKey) {
         document.getElementById("landing-page").style.display = "none";
         document.getElementById("workspace-page").style.display = "flex";
@@ -635,8 +641,7 @@
     }
 
     function showLandingPage() {
-        // Return to main Dashboard identity
-        document.body.style.backgroundColor = "var(--tone-a-light)"; /* Default Dashboard Depth */
+        document.body.style.backgroundColor = "var(--tone-a-light)";
         document.getElementById("workspace-page").style.display = "none";
         document.getElementById("landing-page").style.display = "flex";
     }
@@ -648,18 +653,17 @@
         document.getElementById(`panel-${towerKey}`).classList.add("active");
         document.getElementById(`seg-${towerKey}`).classList.add("active");
 
-        // Dynamic Identity Tone Assignment (Flat Pastels create depth for glass)
         if (towerKey === "towerA") document.body.style.backgroundColor = "var(--tone-a-light)";
         if (towerKey === "towerB") document.body.style.backgroundColor = "var(--tone-b-light)";
-        if (towerKey === "towerC") document.body.style.backgroundColor = "#faf0f3"; /* Rose Depth */
-        if (towerKey === "towerD") document.body.style.backgroundColor = "#f3f0fa"; /* Lavender Depth */
+        if (towerKey === "towerC") document.body.style.backgroundColor = "var(--tone-c-light)";
+        if (towerKey === "towerD") document.body.style.backgroundColor = "var(--tone-d-light)";
     }
 
     function clearAllData(e) {
         e.stopPropagation();
         if (confirm("Are you sure you want to clear all calculator data? This action cannot be undone.")) {
             db = {};
-            localStorage.removeItem('VCalculatorData_v2');
+            localStorage.removeItem('VCalculatorData_v3');
             initTables();
         }
     }
