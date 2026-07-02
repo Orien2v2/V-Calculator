@@ -1,9 +1,11 @@
+html:V Calculator:v_calculator.html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>V Calculator</title>
+    <!-- SheetJS CDN library required for dynamic multi-sheet native Excel generation & parsing -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -362,20 +364,26 @@
             display: block;
         }
 
+        /* UTILITY FOOTER WITH BETTER WRAPPING FOR EMBEDDED CONTEXTS */
         .utility-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 20px;
-            padding-top: 10px;
+            margin-top: 30px;
+            padding-top: 15px;
+            flex-wrap: wrap;
+            gap: 16px;
+            width: 100%;
         }
 
         .button-group {
             display: flex;
             gap: 12px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
+        /* Premium Download Button Layout */
         .excel-dl-btn {
             background-color: #34c759; /* Apple Designer Green */
             color: #ffffff;
@@ -395,10 +403,11 @@
             background-color: #28a745;
         }
 
-        /* File Import Button Wrapper */
-        .excel-import-label {
+        /* Solid standard button to prevent hidden trigger clipping issues */
+        .excel-import-btn {
             background-color: #0071e3; /* Apple Blue */
             color: #ffffff;
+            border: none;
             padding: 12px 24px;
             font-size: 0.95rem;
             font-weight: 600;
@@ -406,10 +415,9 @@
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(0, 113, 227, 0.25);
             transition: var(--transition-smooth);
-            display: inline-block;
         }
 
-        .excel-import-label:hover {
+        .excel-import-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(0, 113, 227, 0.35);
             background-color: #0062c3;
@@ -422,6 +430,7 @@
             font-size: 0.9rem;
             cursor: pointer;
             font-weight: 500;
+            padding: 8px 12px;
         }
 
         /* Custom Modal Confirmation Styling */
@@ -477,8 +486,10 @@
 </head>
 <body>
 
+<!-- STICKY RUNNING WATERMARK -->
 <div class="sticky-watermark">Internal Authorized Use Only. ©Copyright work of Fzbk 2026.</div>
 
+<!-- CONFIRMATION MODAL INTERACTION DRAWER -->
 <div id="confirm-modal" class="modal-overlay">
     <div class="modal-box">
         <h4>Reset Local Database?</h4>
@@ -493,12 +504,14 @@
 
 <div class="app-container">
 
+    <!-- 1. DASHBOARD VIEW PANEL -->
     <div id="landing-page" class="glass-panel">
         <div class="hero-section">
             <h1>V Calculator</h1>
         </div>
 
         <div class="dashboard-grid">
+            <!-- Tower A -->
             <div class="tower-card card-a" onclick="openWorkspace('towerA')">
                 <div>
                     <h3>Tower A</h3>
@@ -516,6 +529,7 @@
                 <button class="apple-action-btn">Expand</button>
             </div>
 
+            <!-- Tower B -->
             <div class="tower-card card-b" onclick="openWorkspace('towerB')">
                 <div>
                     <h3>Tower B</h3>
@@ -533,6 +547,7 @@
                 <button class="apple-action-btn">Expand</button>
             </div>
 
+            <!-- Tower C -->
             <div class="tower-card card-c" onclick="openWorkspace('towerC')">
                 <div>
                     <h3>Tower C</h3>
@@ -550,6 +565,7 @@
                 <button class="apple-action-btn">Expand</button>
             </div>
 
+            <!-- Tower D -->
             <div class="tower-card card-d" onclick="openWorkspace('towerD')">
                 <div>
                     <h3>Tower D</h3>
@@ -568,11 +584,13 @@
             </div>
         </div>
         
+        <!-- UTILITY CONTROL BUTTON GROUPS -->
         <div class="utility-footer">
             <div class="button-group">
                 <button class="excel-dl-btn" onclick="triggerExcelDownload()">Download Data (.xlsx)</button>
                 
-                <label for="excel-file-input" class="excel-import-label">Import Data (.xlsx)</label>
+                <!-- STABLE IMPORT ELEMENT CONTROLS WITH NATIVE DIRECT TRIGGER -->
+                <button class="excel-import-btn" onclick="document.getElementById('excel-file-input').click()">Import Data (.xlsx)</button>
                 <input type="file" id="excel-file-input" accept=".xlsx, .xls" style="display: none;" onchange="handleExcelImport(event)">
             </div>
             
@@ -580,6 +598,7 @@
         </div>
     </div>
 
+    <!-- 2. WORKSPACE MATRIX VIEW -->
     <div id="workspace-page" class="glass-panel">
         <div class="workspace-header">
             <div class="back-link" onclick="showLandingPage()">← Main Page</div>
@@ -594,6 +613,7 @@
             <button class="segment-btn" id="seg-towerD" onclick="switchTab('towerD')">Tower D</button>
         </div>
 
+        <!-- Panels with added Ceiling Area & changed Wall Area headers -->
         <div id="panel-towerA" class="panel-view">
             <div class="table-wrapper">
                 <table>
@@ -752,7 +772,6 @@
         });
     }
 
-    // SheetJS Export Multi-sheet Matrix System
     function triggerExcelDownload() {
         const wb = XLSX.utils.book_new();
 
@@ -786,7 +805,6 @@
         XLSX.writeFile(wb, "V_Calculator_Spatial_Data.xlsx");
     }
 
-    // NEW EXCEL BATCH FILE PARSER AND LOCAL STORAGE SYNCER
     function handleExcelImport(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -799,27 +817,22 @@
                 
                 let newlyParsedDb = {};
 
-                // Loop over the tabs in the Excel file
                 workbook.SheetNames.forEach(sheetName => {
                     const towerKey = reverseMapping[sheetName];
-                    if (!towerKey) return; // Ignore unmapped random sheets
+                    if (!towerKey) return;
 
                     newlyParsedDb[towerKey] = {};
                     const worksheet = workbook.Sheets[sheetName];
-                    // Convert rows to Array-of-Arrays format
                     const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-                    if (rows.length <= 1) return; // Empty or headers-only sheet
+                    if (rows.length <= 1) return;
 
                     let cellCounter = 0;
                     
-                    // Cross reference spreadsheet structure against the core config schema
                     structuralData[towerKey].forEach(group => {
                         group.zones.forEach(zone => {
                             const rowId = `row-${cellCounter}`;
                             
-                            // Scan the parsed array row matching this combination
-                            // Index 0: Floor name, Index 1: Zone name
                             const matchingExcelRow = rows.find(r => r && String(r[0]).trim() === String(group.floor).trim() && String(r[1]).trim() === String(zone).trim());
 
                             if (matchingExcelRow) {
@@ -840,7 +853,6 @@
                                     elevArea: computed
                                 };
                             } else {
-                                // Default blank node if missing in row mapping
                                 newlyParsedDb[towerKey][rowId] = { floorArea: "", ceilingArea: "", perimeter: "", height: "", elevArea: 0 };
                             }
                             cellCounter++;
@@ -848,7 +860,6 @@
                     });
                 });
 
-                // Overwrite state database safely and clean up
                 db = { ...db, ...newlyParsedDb };
                 saveToStorage();
                 initTables();
@@ -857,7 +868,7 @@
                 console.error(error);
                 alert("Error parsing document mapping. Please verify that you are importing an unmodified 'V Calculator' export file layout.");
             }
-            event.target.value = ""; // Flush selected string reference
+            event.target.value = "";
         };
         reader.readAsArrayBuffer(file);
     }
@@ -889,7 +900,6 @@
         if (towerKey === "towerD") document.body.style.backgroundColor = "var(--tone-d-light)";
     }
 
-    // Modal Control Layer
     function openModal(e) {
         e.stopPropagation();
         document.getElementById("confirm-modal").style.display = "flex";
@@ -907,3 +917,8 @@
 </script>
 </body>
 </html>
+
+
+### What Changed in This Patch:
+1. **Removed the Invisible Native Label Method:** Swapped the hidden HTML overlay element for a standard custom `<button>` with native `.click()` routing in JavaScript. This technique bypasses any container boundaries or shadow DOMs that webview platforms like Discord use.
+2. **Fixed Clipping / Shrinkage Risk:** Added `flex-wrap: wrap` inside the wrapper definitions (`.utility-footer` and `.button-group`). If the app runs on a smaller viewport (such as inside a Discord sidebar or overlay window), the buttons will stack beautifully on top of each other instead of shrinking to 0px width.
