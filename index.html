@@ -310,7 +310,7 @@
             font-weight: 600;
             padding: 16px 12px;
             text-align: left;
-            border-bottom: 1px solid var(--border-light);
+            border-bottom: 1.5px solid rgba(0, 0, 0, 0.08);
             font-size: 0.85rem;
             letter-spacing: 0.2px;
         }
@@ -321,9 +321,15 @@
             color: #222222;
         }
 
+        /* Floor-to-floor boundary separators to group layouts visually */
+        tr.floor-row-last td {
+            border-bottom: 2px solid rgba(0, 0, 0, 0.16) !important;
+        }
+
         .floor-heading {
             font-weight: 700;
             color: #000000;
+            background: rgba(255, 255, 255, 0.1);
         }
 
         input[type="number"] {
@@ -709,6 +715,11 @@
                     
                     const record = db[towerKey][rowId];
                     const tr = document.createElement("tr");
+
+                    // Set dynamic floor-row-last class on the final zone row of each floor level
+                    if (index === group.zones.length - 1) {
+                        tr.classList.add("floor-row-last");
+                    }
 
                     const floorCell = (index === 0) 
                         ? `<td class="floor-heading" rowspan="${group.zones.length}">${group.floor}</td>` 
