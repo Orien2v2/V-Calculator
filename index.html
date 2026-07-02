@@ -300,7 +300,7 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 0.95rem;
-            min-width: 880px; /* Wider footprint to cleanly map the new layout width safely */
+            min-width: 880px;
         }
 
         th {
@@ -370,6 +370,12 @@
             padding-top: 10px;
         }
 
+        .button-group {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
         .excel-dl-btn {
             background-color: #34c759; /* Apple Designer Green */
             color: #ffffff;
@@ -387,6 +393,26 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(52, 199, 89, 0.35);
             background-color: #28a745;
+        }
+
+        /* File Import Button Wrapper */
+        .excel-import-label {
+            background-color: #0071e3; /* Apple Blue */
+            color: #ffffff;
+            padding: 12px 24px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 113, 227, 0.25);
+            transition: var(--transition-smooth);
+            display: inline-block;
+        }
+
+        .excel-import-label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 113, 227, 0.35);
+            background-color: #0062c3;
         }
 
         .danger-reset-btn {
@@ -543,7 +569,13 @@
         </div>
         
         <div class="utility-footer">
-            <button class="excel-dl-btn" onclick="triggerExcelDownload()">Download Data (.xlsx)</button>
+            <div class="button-group">
+                <button class="excel-dl-btn" onclick="triggerExcelDownload()">Download Data (.xlsx)</button>
+                
+                <label for="excel-file-input" class="excel-import-label">Import Data (.xlsx)</label>
+                <input type="file" id="excel-file-input" accept=".xlsx, .xls" style="display: none;" onchange="handleExcelImport(event)">
+            </div>
+            
             <button class="danger-reset-btn" onclick="openModal(event)">Reset Local Database</button>
         </div>
     </div>
@@ -631,10 +663,13 @@
         ]
     };
 
-    let db = JSON.parse(localStorage.getItem('VCalculatorData_v4')) || {};
+    const nameMapping = { towerA: "Tower A", towerB: "Tower B", towerC: "Tower C", towerD: "Tower D" };
+    const reverseMapping = { "Tower A": "towerA", "Tower B": "towerB", "Tower C": "towerC", "Tower D": "towerD" };
+
+    let db = JSON.parse(localStorage.getItem('VCalculatorData_v5')) || {};
 
     function saveToStorage() {
-        localStorage.setItem('VCalculatorData_v4', JSON.stringify(db));
+        localStorage.setItem('VCalculatorData_v5', JSON.stringify(db));
         updateDashboardMetrics();
     }
 
@@ -696,7 +731,6 @@
             elevArea: computed
         };
 
-        // Instant UI update using Math.ceil
         document.getElementById(`${towerKey}-${rowId}-output`).innerText = Math.ceil(computed);
         saveToStorage();
     }
@@ -724,7 +758,6 @@
 
         Object.keys(structuralData).forEach(towerKey => {
             const sheetRows = [];
-            // Header configuration reflecting layout
             sheetRows.push(["Floor", "Zone", "Floor Area (m²)", "Ceiling Area (m²)", "Wall Perimeter (mm)", "Height (mm)", "Wall Area (m²)*"]);
             
             let cellCounter = 0;
@@ -747,12 +780,86 @@
             });
 
             const ws = XLSX.utils.aoa_to_sheet(sheetRows);
-            // Format sheet tab labels beautifully
-            const nameMapping = { towerA: "Tower A", towerB: "Tower B", towerC: "Tower C", towerD: "Tower D" };
             XLSX.utils.book_append_sheet(wb, ws, nameMapping[towerKey]);
         });
 
         XLSX.writeFile(wb, "V_Calculator_Spatial_Data.xlsx");
+    }
+
+    // NEW EXCEL BATCH FILE PARSER AND LOCAL STORAGE SYNCER
+    function handleExcelImport(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                
+                let newlyParsedDb = {};
+
+                // Loop over the tabs in the Excel file
+                workbook.SheetNames.forEach(sheetName => {
+                    const towerKey = reverseMapping[sheetName];
+                    if (!towerKey) return; // Ignore unmapped random sheets
+
+                    newlyParsedDb[towerKey] = {};
+                    const worksheet = workbook.Sheets[sheetName];
+                    // Convert rows to Array-of-Arrays format
+                    const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                    if (rows.length <= 1) return; // Empty or headers-only sheet
+
+                    let cellCounter = 0;
+                    
+                    // Cross reference spreadsheet structure against the core config schema
+                    structuralData[towerKey].forEach(group => {
+                        group.zones.forEach(zone => {
+                            const rowId = `row-${cellCounter}`;
+                            
+                            // Scan the parsed array row matching this combination
+                            // Index 0: Floor name, Index 1: Zone name
+                            const matchingExcelRow = rows.find(r => r && String(r[0]).trim() === String(group.floor).trim() && String(r[1]).trim() === String(zone).trim());
+
+                            if (matchingExcelRow) {
+                                const fa = matchingExcelRow[2] !== undefined ? String(matchingExcelRow[2]) : "";
+                                const ca = matchingExcelRow[3] !== undefined ? String(matchingExcelRow[3]) : "";
+                                const p = matchingExcelRow[4] !== undefined ? String(matchingExcelRow[4]) : "";
+                                const h = matchingExcelRow[5] !== undefined ? String(matchingExcelRow[5]) : "";
+                                
+                                const pNum = parseFloat(p) || 0;
+                                const hNum = parseFloat(h) || 0;
+                                const computed = (pNum * hNum) / 1000000;
+
+                                newlyParsedDb[towerKey][rowId] = {
+                                    floorArea: fa,
+                                    ceilingArea: ca,
+                                    perimeter: p,
+                                    height: h,
+                                    elevArea: computed
+                                };
+                            } else {
+                                // Default blank node if missing in row mapping
+                                newlyParsedDb[towerKey][rowId] = { floorArea: "", ceilingArea: "", perimeter: "", height: "", elevArea: 0 };
+                            }
+                            cellCounter++;
+                        });
+                    });
+                });
+
+                // Overwrite state database safely and clean up
+                db = { ...db, ...newlyParsedDb };
+                saveToStorage();
+                initTables();
+                alert("Excel spatial records loaded and synced successfully!");
+            } catch (error) {
+                console.error(error);
+                alert("Error parsing document mapping. Please verify that you are importing an unmodified 'V Calculator' export file layout.");
+            }
+            event.target.value = ""; // Flush selected string reference
+        };
+        reader.readAsArrayBuffer(file);
     }
 
     function openWorkspace(towerKey) {
@@ -774,9 +881,7 @@
         document.getElementById(`panel-${towerKey}`).classList.add("active");
         document.getElementById(`seg-${towerKey}`).classList.add("active");
 
-        // CHANGE 2: Update Page title cleanly to reflect active tower view
-        const titleMapping = { towerA: "Tower A", towerB: "Tower B", towerC: "Tower C", towerD: "Tower D" };
-        document.getElementById("workspace-dynamic-title").innerText = titleMapping[towerKey];
+        document.getElementById("workspace-dynamic-title").innerText = nameMapping[towerKey];
 
         if (towerKey === "towerA") document.body.style.backgroundColor = "var(--tone-a-light)";
         if (towerKey === "towerB") document.body.style.backgroundColor = "var(--tone-b-light)";
@@ -794,7 +899,7 @@
     }
     function executePurge() {
         db = {};
-        localStorage.removeItem('VCalculatorData_v4');
+        localStorage.removeItem('VCalculatorData_v5');
         initTables();
     }
 
