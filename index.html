@@ -51,7 +51,7 @@
         body {
             background-color: var(--tone-a-light);
             color: var(--brand-title);
-            padding: 40px 20px;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: flex-start;
@@ -59,35 +59,37 @@
             transition: background-color 0.5s ease;
         }
 
-        @media (max-width: 768px) {
-            body { padding: 20px 10px; }
-        }
-
+        /* FLUID APP CONTAINER - Dynamic margins prevent layout squishing in split panes */
         .app-container {
             width: 100%;
             max-width: 1000px;
-            margin: 0 auto;
+            margin: clamp(12px, 5vw, 50px) auto;
+            padding: 0 clamp(10px, 3vw, 24px);
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
 
-        /* PERSISTENT FLOATING WATERMARK */
+        /* PERSISTENT FLOATING WATERMARK - Legible on any background with subtle backing blur */
         .sticky-watermark {
             position: fixed;
-            bottom: 16px;
-            left: 16px;
-            font-size: 0.62rem;
+            bottom: 12px;
+            left: 12px;
+            font-size: 0.6rem;
             font-weight: 600;
             letter-spacing: 0.3px;
-            color: rgba(0, 0, 0, 0.3);
-            text-transform: none;
+            color: rgba(0, 0, 0, 0.35);
             z-index: 9999;
             pointer-events: none;
             user-select: none;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 2px 6px;
+            border-radius: 4px;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
         }
 
-        /* V CALCULATOR GLASS PANEL */
+        /* V CALCULATOR GLASS PANEL - Fluid padding to optimize horizontal space when squeezed */
         .glass-panel {
             background-color: var(--surface-glass);
             backdrop-filter: var(--glass-blur);
@@ -95,7 +97,7 @@
             border: 1px solid var(--border-light);
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.02);
             border-radius: 24px;
-            padding: 40px;
+            padding: clamp(16px, 4vw, 36px);
             position: relative;
             width: 100%;
         }
@@ -110,45 +112,33 @@
             z-index: 1;
         }
 
-        @media (max-width: 768px) {
-            .glass-panel { padding: 24px 18px; }
-        }
-
-        /* HERO SECTION */
+        /* FLUID HERO HEADER */
         .hero-section {
             text-align: center;
-            padding: 40px 0;
+            padding: clamp(15px, 4vw, 35px) 0;
             width: 100%;
         }
 
         .hero-section h1 {
-            font-size: 4.2rem;
+            font-size: clamp(2.2rem, 8vw, 4.2rem);
             font-weight: 800;
-            letter-spacing: -2.5px;
+            letter-spacing: -2px;
             color: #000000;
             line-height: 1.0;
         }
 
-        @media (max-width: 768px) {
-            .hero-section h1 { font-size: 3rem; letter-spacing: -1.5px; }
-        }
-
-        /* DASHBOARD OVERVIEW GRID & COLOURED HIGHLIGHT CARDS */
+        /* FLUID GRID SYSTEM - Auto-fits perfectly into split panes or wide displays */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 20px;
             width: 100%;
-        }
-
-        @media (max-width: 600px) {
-            .dashboard-grid { grid-template-columns: 1fr; }
         }
 
         .tower-card {
             background: #ffffff;
             border-radius: 20px;
-            padding: 26px;
+            padding: 24px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -156,6 +146,7 @@
             position: relative;
             z-index: 2;
             transition: var(--transition-smooth);
+            min-height: 200px;
         }
 
         /* Card Custom Subtle Pastel Accents & Shadows */
@@ -171,44 +162,49 @@
         .tower-card.card-d:hover { transform: translateY(-4px); box-shadow: 0 20px 35px var(--tone-d-glow); }
 
         .tower-card h3 {
-            font-size: 1.6rem;
+            font-size: clamp(1.3rem, 4vw, 1.6rem);
             font-weight: 700;
             letter-spacing: -0.5px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             color: #000000;
         }
 
+        /* Flex-wrap stats prevent text clipping or stacking bugs on squeezed viewports */
         .tower-stats {
             display: flex;
-            gap: 28px;
-            margin-bottom: 28px;
+            gap: 16px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
         .stat-item {
             display: flex;
             flex-direction: column;
+            min-width: 100px;
+            flex: 1;
         }
 
         .stat-label {
-            font-size: 0.8rem;
+            font-size: 0.72rem;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.8px;
             color: var(--brand-body);
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .stat-value {
-            font-size: 1.3rem;
+            font-size: clamp(1.1rem, 3vw, 1.3rem);
             font-weight: 700;
             color: #000000;
+            white-space: nowrap;
         }
 
         .apple-action-btn {
             background-color: #f5f5f7;
             color: var(--brand-accent);
             border: none;
-            padding: 12px 22px;
+            padding: 10px 20px;
             font-size: 0.9rem;
             font-weight: 600;
             border-radius: 20px;
@@ -216,6 +212,7 @@
             text-align: center;
             transition: var(--transition-smooth);
             align-self: flex-start;
+            margin-top: auto;
         }
 
         .tower-card.card-a:hover .apple-action-btn { background-color: #34c759; color: #fff; }
@@ -236,6 +233,8 @@
             align-items: center;
             border-bottom: 1px solid var(--border-light);
             padding-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .back-link {
@@ -250,7 +249,7 @@
         }
 
         .workspace-title {
-            font-size: 1.6rem;
+            font-size: clamp(1.3rem, 4vw, 1.6rem);
             font-weight: 700;
             letter-spacing: -0.5px;
             color: #000000;
@@ -264,6 +263,7 @@
             border-radius: 13px;
             width: 100%;
             border: 1px solid rgba(0,0,0,0.02);
+            overflow-x: auto;
         }
 
         .segment-btn {
@@ -278,6 +278,7 @@
             outline: none;
             transition: all 0.2s ease;
             color: #444444;
+            white-space: nowrap;
         }
 
         .segment-btn.active {
@@ -286,7 +287,7 @@
             color: #000000;
         }
 
-        /* DYNAMIC WORKSPACE MATRIX ELEMENTS */
+        /* DYNAMIC WORKSPACE MATRIX ELEMENTS - Responsive table wrappers keep layout completely rigid */
         .table-wrapper {
             width: 100%;
             overflow-x: auto;
@@ -301,7 +302,7 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 0.95rem;
-            min-width: 880px;
+            min-width: 880px; /* Safe landscape width for spreadsheet layout scrollbars */
         }
 
         th {
@@ -363,7 +364,7 @@
             display: block;
         }
 
-        /* UTILITY FOOTER WITH BETTER WRAPPING FOR EMBEDDED CONTEXTS */
+        /* UTILITY FOOTER WITH HIGH STABILITY WRAPPING FOR EMBEDDED SPLIT WINDOWS */
         .utility-footer {
             display: flex;
             justify-content: space-between;
@@ -382,7 +383,6 @@
             flex-wrap: wrap;
         }
 
-        /* Premium Download Button Layout */
         .excel-dl-btn {
             background-color: #34c759; /* Apple Designer Green */
             color: #ffffff;
@@ -402,7 +402,6 @@
             background-color: #28a745;
         }
 
-        /* Solid standard button to prevent hidden trigger clipping issues */
         .excel-import-btn {
             background-color: #0071e3; /* Apple Blue */
             color: #ffffff;
@@ -602,7 +601,7 @@
         <div class="workspace-header">
             <div class="back-link" onclick="showLandingPage()">← Main Page</div>
             <div class="workspace-title" id="workspace-dynamic-title">Tower A</div>
-            <div style="width: 90px;"></div>
+            <div style="width: 50px;"></div>
         </div>
 
         <div class="segmented-control">
