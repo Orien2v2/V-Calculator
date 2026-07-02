@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>V Calculator</title>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         :root {
             /* V Calculator Branding - Professional Designer Palettes */
@@ -59,7 +60,7 @@
 
         .app-container {
             width: 100%;
-            max-width: 960px;
+            max-width: 1000px;
             margin: 60px 20px;
             display: flex;
             flex-direction: column;
@@ -75,11 +76,11 @@
             position: fixed;
             bottom: 16px;
             left: 16px;
-            font-size: 0.68rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            color: rgba(0, 0, 0, 0.22);
-            text-transform: uppercase;
+            font-size: 0.62rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            color: rgba(0, 0, 0, 0.3);
+            text-transform: none;
             z-index: 9999;
             pointer-events: none;
             user-select: none;
@@ -299,7 +300,7 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 0.95rem;
-            min-width: 780px;
+            min-width: 880px; /* Wider footprint to cleanly map the new layout width safely */
         }
 
         th {
@@ -325,7 +326,7 @@
 
         input[type="number"] {
             width: 100%;
-            max-width: 120px;
+            max-width: 110px;
             padding: 8px 12px;
             border: 1px solid rgba(0, 0, 0, 0.1);
             border-radius: 9px;
@@ -363,8 +364,29 @@
 
         .utility-footer {
             display: flex;
-            justify-content: flex-end;
-            margin-top: 10px;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 10px;
+        }
+
+        .excel-dl-btn {
+            background-color: #34c759; /* Apple Designer Green */
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(52, 199, 89, 0.25);
+            transition: var(--transition-smooth);
+        }
+
+        .excel-dl-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(52, 199, 89, 0.35);
+            background-color: #28a745;
         }
 
         .danger-reset-btn {
@@ -375,11 +397,73 @@
             cursor: pointer;
             font-weight: 500;
         }
+
+        /* Custom Modal Confirmation Styling */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-box {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 440px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+        .modal-box h4 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .modal-box p {
+            font-size: 0.95rem;
+            color: var(--brand-body);
+            margin-bottom: 24px;
+            line-height: 1.4;
+        }
+        .modal-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .modal-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-destructive { background: #ff3b30; color: white; }
+        .btn-download-option { background: #34c759; color: white; }
+        .btn-cancel { background: #f5f5f7; color: #000; }
     </style>
 </head>
 <body>
 
-<div class="sticky-watermark">Fz</div>
+<div class="sticky-watermark">Internal Authorized Use Only. ©Copyright work of Fzbk 2026.</div>
+
+<div id="confirm-modal" class="modal-overlay">
+    <div class="modal-box">
+        <h4>Reset Local Database?</h4>
+        <p>This will erase all current numbers entered across all towers. Would you like to backup and export your current tables to Excel before purging?</p>
+        <div class="modal-actions">
+            <button class="modal-btn btn-download-option" onclick="triggerExcelDownload(); closeModal();">Download Data to Excel First</button>
+            <button class="modal-btn btn-destructive" onclick="executePurge(); closeModal();">Clear All Data Permanently</button>
+            <button class="modal-btn btn-cancel" onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+</div>
 
 <div class="app-container">
 
@@ -399,7 +483,7 @@
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">Wall Area</span>
-                            <span class="stat-value" id="dash-towerA-wall">0.00 m²</span>
+                            <span class="stat-value" id="dash-towerA-wall">0 m²</span>
                         </div>
                     </div>
                 </div>
@@ -416,7 +500,7 @@
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">Wall Area</span>
-                            <span class="stat-value" id="dash-towerB-wall">0.00 m²</span>
+                            <span class="stat-value" id="dash-towerB-wall">0 m²</span>
                         </div>
                     </div>
                 </div>
@@ -433,7 +517,7 @@
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">Wall Area</span>
-                            <span class="stat-value" id="dash-towerC-wall">0.00 m²</span>
+                            <span class="stat-value" id="dash-towerC-wall">0 m²</span>
                         </div>
                     </div>
                 </div>
@@ -450,7 +534,7 @@
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">Wall Area</span>
-                            <span class="stat-value" id="dash-towerD-wall">0.00 m²</span>
+                            <span class="stat-value" id="dash-towerD-wall">0 m²</span>
                         </div>
                     </div>
                 </div>
@@ -459,15 +543,16 @@
         </div>
         
         <div class="utility-footer">
-            <button class="danger-reset-btn" onclick="clearAllData(event)">Reset Local Database</button>
+            <button class="excel-dl-btn" onclick="triggerExcelDownload()">Download Data (.xlsx)</button>
+            <button class="danger-reset-btn" onclick="openModal(event)">Reset Local Database</button>
         </div>
     </div>
 
     <div id="workspace-page" class="glass-panel">
         <div class="workspace-header">
-            <div class="back-link" onclick="showLandingPage()">← Dashboard</div>
-            <div class="workspace-title">Data Entry Matrix</div>
-            <div style="width: 70px;"></div>
+            <div class="back-link" onclick="showLandingPage()">← Main Page</div>
+            <div class="workspace-title" id="workspace-dynamic-title">Tower A</div>
+            <div style="width: 90px;"></div>
         </div>
 
         <div class="segmented-control">
@@ -480,7 +565,7 @@
         <div id="panel-towerA" class="panel-view">
             <div class="table-wrapper">
                 <table>
-                    <thead><tr><th>Floor</th><th>Zone</th><th>Floor Area (m²)</th><th>Wall Perimeter (mm)</th><th>Height (mm)</th><th>Elev. Area (m²)</th></tr></thead>
+                    <thead><tr><th>Floor</th><th>Zone</th><th>Floor Area (m²)</th><th>Ceiling Area (m²)</th><th>Wall Perimeter (mm)</th><th>Height (mm)</th><th>Wall Area (m²)*</th></tr></thead>
                     <tbody id="table-body-towerA"></tbody>
                 </table>
             </div>
@@ -489,7 +574,7 @@
         <div id="panel-towerB" class="panel-view">
             <div class="table-wrapper">
                 <table>
-                    <thead><tr><th>Floor</th><th>Zone</th><th>Floor Area (m²)</th><th>Wall Perimeter (mm)</th><th>Height (mm)</th><th>Elev. Area (m²)</th></tr></thead>
+                    <thead><tr><th>Floor</th><th>Zone</th><th>Floor Area (m²)</th><th>Ceiling Area (m²)</th><th>Wall Perimeter (mm)</th><th>Height (mm)</th><th>Wall Area (m²)*</th></tr></thead>
                     <tbody id="table-body-towerB"></tbody>
                 </table>
             </div>
@@ -498,7 +583,7 @@
         <div id="panel-towerC" class="panel-view">
             <div class="table-wrapper">
                 <table>
-                    <thead><tr><th>Floor</th><th>Zone</th><th>Floor Area (m²)</th><th>Wall Perimeter (mm)</th><th>Height (mm)</th><th>Elev. Area (m²)</th></tr></thead>
+                    <thead><tr><th>Floor</th><th>Zone</th><th>Floor Area (m²)</th><th>Ceiling Area (m²)</th><th>Wall Perimeter (mm)</th><th>Height (mm)</th><th>Wall Area (m²)*</th></tr></thead>
                     <tbody id="table-body-towerC"></tbody>
                 </table>
             </div>
@@ -507,7 +592,7 @@
         <div id="panel-towerD" class="panel-view">
             <div class="table-wrapper">
                 <table>
-                    <thead><tr><th>Floor</th><th>Zone</th><th>Floor Area (m²)</th><th>Wall Perimeter (mm)</th><th>Height (mm)</th><th>Elev. Area (m²)</th></tr></thead>
+                    <thead><tr><th>Floor</th><th>Zone</th><th>Floor Area (m²)</th><th>Ceiling Area (m²)</th><th>Wall Perimeter (mm)</th><th>Height (mm)</th><th>Wall Area (m²)*</th></tr></thead>
                     <tbody id="table-body-towerD"></tbody>
                 </table>
             </div>
@@ -546,10 +631,10 @@
         ]
     };
 
-    let db = JSON.parse(localStorage.getItem('VCalculatorData_v3')) || {};
+    let db = JSON.parse(localStorage.getItem('VCalculatorData_v4')) || {};
 
     function saveToStorage() {
-        localStorage.setItem('VCalculatorData_v3', JSON.stringify(db));
+        localStorage.setItem('VCalculatorData_v4', JSON.stringify(db));
         updateDashboardMetrics();
     }
 
@@ -566,7 +651,7 @@
                     const rowId = `row-${cellCounter}`;
                     
                     if (!db[towerKey][rowId]) {
-                        db[towerKey][rowId] = { floorArea: "", perimeter: "", height: "", elevArea: 0 };
+                        db[towerKey][rowId] = { floorArea: "", ceilingArea: "", perimeter: "", height: "", elevArea: 0 };
                     }
                     
                     const record = db[towerKey][rowId];
@@ -580,9 +665,10 @@
                         ${floorCell}
                         <td>${zone}</td>
                         <td><input type="number" step="any" placeholder="0" value="${record.floorArea || ''}" id="${towerKey}-${rowId}-fa" oninput="trackMetric('${towerKey}', '${rowId}')"></td>
+                        <td><input type="number" step="any" placeholder="0" value="${record.ceilingArea || ''}" id="${towerKey}-${rowId}-ca" oninput="trackMetric('${towerKey}', '${rowId}')"></td>
                         <td><input type="number" step="any" placeholder="0" value="${record.perimeter || ''}" id="${towerKey}-${rowId}-p" oninput="trackMetric('${towerKey}', '${rowId}')"></td>
                         <td><input type="number" step="any" placeholder="0" value="${record.height || ''}" id="${towerKey}-${rowId}-h" oninput="trackMetric('${towerKey}', '${rowId}')"></td>
-                        <td class="matrix-total" id="${towerKey}-${rowId}-output">${parseFloat(record.elevArea).toFixed(2) || '0.00'}</td>
+                        <td class="matrix-total" id="${towerKey}-${rowId}-output">${Math.ceil(parseFloat(record.elevArea || 0))}</td>
                     `;
                     tbody.appendChild(tr);
                     cellCounter++;
@@ -594,6 +680,7 @@
 
     function trackMetric(towerKey, rowId) {
         const fa = document.getElementById(`${towerKey}-${rowId}-fa`).value;
+        const ca = document.getElementById(`${towerKey}-${rowId}-ca`).value;
         const p = document.getElementById(`${towerKey}-${rowId}-p`).value;
         const h = document.getElementById(`${towerKey}-${rowId}-h`).value;
 
@@ -603,12 +690,14 @@
 
         db[towerKey][rowId] = {
             floorArea: fa,
+            ceilingArea: ca,
             perimeter: p,
             height: h,
             elevArea: computed
         };
 
-        document.getElementById(`${towerKey}-${rowId}-output`).innerText = computed.toFixed(2);
+        // Instant UI update using Math.ceil
+        document.getElementById(`${towerKey}-${rowId}-output`).innerText = Math.ceil(computed);
         saveToStorage();
     }
 
@@ -620,13 +709,50 @@
             if (db[towerKey]) {
                 Object.keys(db[towerKey]).forEach(rowId => {
                     totalFloor += parseFloat(db[towerKey][rowId].floorArea) || 0;
-                    totalWall += parseFloat(db[towerKey][rowId].elevArea) || 0;
+                    totalWall += Math.ceil(parseFloat(db[towerKey][rowId].elevArea || 0));
                 });
             }
 
             document.getElementById(`dash-${towerKey}-floor`).innerText = `${totalFloor.toFixed(2)} m²`;
-            document.getElementById(`dash-${towerKey}-wall`).innerText = `${totalWall.toFixed(2)} m²`;
+            document.getElementById(`dash-${towerKey}-wall`).innerText = `${totalWall} m²`;
         });
+    }
+
+    // SheetJS Export Multi-sheet Matrix System
+    function triggerExcelDownload() {
+        const wb = XLSX.utils.book_new();
+
+        Object.keys(structuralData).forEach(towerKey => {
+            const sheetRows = [];
+            // Header configuration reflecting layout
+            sheetRows.push(["Floor", "Zone", "Floor Area (m²)", "Ceiling Area (m²)", "Wall Perimeter (mm)", "Height (mm)", "Wall Area (m²)*"]);
+            
+            let cellCounter = 0;
+            structuralData[towerKey].forEach(group => {
+                group.zones.forEach((zone) => {
+                    const rowId = `row-${cellCounter}`;
+                    const record = db[towerKey]?.[rowId] || { floorArea: "", ceilingArea: "", perimeter: "", height: "", elevArea: 0 };
+                    
+                    sheetRows.push([
+                        group.floor,
+                        zone,
+                        record.floorArea !== "" ? parseFloat(record.floorArea) : "",
+                        record.ceilingArea !== "" ? parseFloat(record.ceilingArea) : "",
+                        record.perimeter !== "" ? parseFloat(record.perimeter) : "",
+                        record.height !== "" ? parseFloat(record.height) : "",
+                        Math.ceil(parseFloat(record.elevArea || 0))
+                    ]);
+                    cellCounter++;
+                });
+            });
+
+            const ws = XLSX.utils.aoa_to_sheet(sheetRows);
+            // Format sheet tab labels beautifully
+            const nameMapping = { towerA: "Tower A", towerB: "Tower B", towerC: "Tower C", towerD: "Tower D" };
+            XLSX.utils.book_append_sheet(wb, ws, nameMapping[towerKey]);
+        });
+
+        XLSX.writeFile(wb, "V_Calculator_Spatial_Data.xlsx");
     }
 
     function openWorkspace(towerKey) {
@@ -638,7 +764,7 @@
     function showLandingPage() {
         document.body.style.backgroundColor = "var(--tone-a-light)";
         document.getElementById("workspace-page").style.display = "none";
-        document.getElementById("landing-page").style.display = "block"; // Reset standard layout behavior
+        document.getElementById("landing-page").style.display = "block";
     }
 
     function switchTab(towerKey) {
@@ -648,19 +774,28 @@
         document.getElementById(`panel-${towerKey}`).classList.add("active");
         document.getElementById(`seg-${towerKey}`).classList.add("active");
 
+        // CHANGE 2: Update Page title cleanly to reflect active tower view
+        const titleMapping = { towerA: "Tower A", towerB: "Tower B", towerC: "Tower C", towerD: "Tower D" };
+        document.getElementById("workspace-dynamic-title").innerText = titleMapping[towerKey];
+
         if (towerKey === "towerA") document.body.style.backgroundColor = "var(--tone-a-light)";
         if (towerKey === "towerB") document.body.style.backgroundColor = "var(--tone-b-light)";
         if (towerKey === "towerC") document.body.style.backgroundColor = "var(--tone-c-light)";
         if (towerKey === "towerD") document.body.style.backgroundColor = "var(--tone-d-light)";
     }
 
-    function clearAllData(e) {
+    // Modal Control Layer
+    function openModal(e) {
         e.stopPropagation();
-        if (confirm("Are you sure you want to clear all calculator data? This action cannot be undone.")) {
-            db = {};
-            localStorage.removeItem('VCalculatorData_v3');
-            initTables();
-        }
+        document.getElementById("confirm-modal").style.display = "flex";
+    }
+    function closeModal() {
+        document.getElementById("confirm-modal").style.display = "none";
+    }
+    function executePurge() {
+        db = {};
+        localStorage.removeItem('VCalculatorData_v4');
+        initTables();
     }
 
     window.onload = initTables;
