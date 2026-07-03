@@ -59,7 +59,7 @@
             transition: background-color 0.5s ease;
         }
 
-        /* FLUID APP CONTAINER - Dynamic margins prevent layout squishing in split panes */
+        /* FLUID APP CONTAINER */
         .app-container {
             width: 100%;
             max-width: 1000px;
@@ -70,7 +70,7 @@
             gap: 20px;
         }
 
-        /* PERSISTENT FLOATING WATERMARK - Legible on any background with subtle backing blur */
+        /* PERSISTENT FLOATING WATERMARK */
         .sticky-watermark {
             position: fixed;
             bottom: 12px;
@@ -89,7 +89,7 @@
             -webkit-backdrop-filter: blur(4px);
         }
 
-        /* V CALCULATOR GLASS PANEL - Fluid padding to optimize horizontal space when squeezed */
+        /* GLASS PANEL */
         .glass-panel {
             background-color: var(--surface-glass);
             backdrop-filter: var(--glass-blur);
@@ -112,7 +112,7 @@
             z-index: 1;
         }
 
-        /* FLUID HERO HEADER */
+        /* HERO HEADER */
         .hero-section {
             text-align: center;
             padding: clamp(15px, 4vw, 35px) 0;
@@ -127,7 +127,7 @@
             line-height: 1.0;
         }
 
-        /* FLUID GRID SYSTEM - Auto-fits perfectly into split panes or wide displays */
+        /* DASHBOARD GRID */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -149,13 +149,11 @@
             min-height: 200px;
         }
 
-        /* Card Custom Subtle Pastel Accents & Shadows */
         .tower-card.card-a { border: 1px solid var(--tone-a-accent); box-shadow: 0 4px 20px var(--tone-a-glow); }
         .tower-card.card-b { border: 1px solid var(--tone-b-accent); box-shadow: 0 4px 20px var(--tone-b-glow); }
         .tower-card.card-c { border: 1px solid var(--tone-c-accent); box-shadow: 0 4px 20px var(--tone-c-glow); }
         .tower-card.card-d { border: 1px solid var(--tone-d-accent); box-shadow: 0 4px 20px var(--tone-d-glow); }
 
-        /* Premium Expansion Glows on Interaction */
         .tower-card.card-a:hover { transform: translateY(-4px); box-shadow: 0 20px 35px var(--tone-a-glow); }
         .tower-card.card-b:hover { transform: translateY(-4px); box-shadow: 0 20px 35px var(--tone-b-glow); }
         .tower-card.card-c:hover { transform: translateY(-4px); box-shadow: 0 20px 35px var(--tone-c-glow); }
@@ -169,7 +167,6 @@
             color: #000000;
         }
 
-        /* Flex-wrap stats prevent text clipping or stacking bugs on squeezed viewports */
         .tower-stats {
             display: flex;
             gap: 16px;
@@ -220,7 +217,7 @@
         .tower-card.card-c:hover .apple-action-btn { background-color: #ff2d55; color: #fff; }
         .tower-card.card-d:hover .apple-action-btn { background-color: #5856d6; color: #fff; }
 
-        /* CALCULATOR WORKSPACE */
+        /* WORKSPACE PAGE */
         #workspace-page {
             display: none;
             flex-direction: column;
@@ -255,7 +252,6 @@
             color: #000000;
         }
 
-        /* Apple Segmented Controls with dynamic borders */
         .segmented-control {
             display: flex;
             background: rgba(118, 118, 128, 0.08);
@@ -287,7 +283,6 @@
             color: #000000;
         }
 
-        /* DYNAMIC WORKSPACE MATRIX ELEMENTS - Responsive table wrappers keep layout completely rigid */
         .table-wrapper {
             width: 100%;
             overflow-x: auto;
@@ -302,7 +297,7 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 0.95rem;
-            min-width: 880px; /* Safe landscape width for spreadsheet layout scrollbars */
+            min-width: 880px;
         }
 
         th {
@@ -321,7 +316,6 @@
             color: #222222;
         }
 
-        /* Floor-to-floor boundary separators to group layouts visually */
         tr.floor-row-last td {
             border-bottom: 2px solid rgba(0, 0, 0, 0.16) !important;
         }
@@ -343,13 +337,6 @@
             background: #ffffff;
             color: #000000;
             transition: var(--transition-smooth);
-            -moz-appearance: textfield;
-        }
-
-        input[type="number"]::-webkit-outer-spin-button,
-        input[type="number"]::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
         }
 
         input[type="number"]:focus {
@@ -370,7 +357,6 @@
             display: block;
         }
 
-        /* UTILITY FOOTER WITH HIGH STABILITY WRAPPING FOR EMBEDDED SPLIT WINDOWS */
         .utility-footer {
             display: flex;
             justify-content: space-between;
@@ -390,7 +376,7 @@
         }
 
         .excel-dl-btn {
-            background-color: #34c759; /* Apple Designer Green */
+            background-color: #34c759;
             color: #ffffff;
             border: none;
             padding: 12px 24px;
@@ -409,7 +395,7 @@
         }
 
         .excel-import-btn {
-            background-color: #0071e3; /* Apple Blue */
+            background-color: #0071e3;
             color: #ffffff;
             border: none;
             padding: 12px 24px;
@@ -437,7 +423,31 @@
             padding: 8px 12px;
         }
 
-        /* Custom Modal Confirmation Styling */
+        /* APPLE TOAST NOTIFICATION STYLING */
+        .toast-notification {
+            position: fixed;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+            padding: 14px 28px;
+            border-radius: 30px;
+            z-index: 11000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: top 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .toast-notification.show { top: 24px; }
+        .toast-icon { width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; color: white; }
+        .toast-icon.success { background: #34c759; }
+        .toast-text { font-size: 0.95rem; font-weight: 600; color: #000000; }
+
+        /* MODAL CONFIRMATION STYLING */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -458,84 +468,25 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.15);
             text-align: center;
         }
-        .modal-box h4 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-        .modal-box p {
-            font-size: 0.95rem;
-            color: var(--brand-body);
-            margin-bottom: 24px;
-            line-height: 1.4;
-        }
-        .modal-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .modal-btn {
-            width: 100%;
-            padding: 12px;
-            border-radius: 12px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-        }
+        .modal-box h4 { font-size: 1.3rem; font-weight: 700; margin-bottom: 12px; }
+        .modal-box p { font-size: 0.95rem; color: var(--brand-body); margin-bottom: 24px; line-height: 1.4; }
+        .modal-actions { display: flex; flex-direction: column; gap: 10px; }
+        .modal-btn { width: 100%; padding: 12px; border-radius: 12px; font-size: 0.95rem; font-weight: 600; cursor: pointer; border: none; }
         .btn-destructive { background: #ff3b30; color: white; }
         .btn-download-option { background: #34c759; color: white; }
         .btn-cancel { background: #f5f5f7; color: #000; }
-
-        /* Custom Elegant Toast Notifications Container */
-        .toast-container {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            z-index: 10001;
-            pointer-events: none;
-        }
-        .toast {
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            padding: 14px 20px;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transform: translateY(100px);
-            opacity: 0;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            pointer-events: auto;
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: #000000;
-            border-left: 4px solid #000;
-        }
-        .toast.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
-        .toast-success {
-            border-left-color: #34c759;
-        }
-        .toast-error {
-            border-left-color: #ff3b30;
-        }
     </style>
 </head>
 <body>
 
-<!-- STICKY RUNNING WATERMARK -->
 <div class="sticky-watermark">Internal Authorized Use Only. ©Copyright work of Fzbk 2026.</div>
 
-<!-- CONFIRMATION MODAL INTERACTION DRAWER -->
+<!-- TOAST SYSTEM NOTIFICATION PANEL -->
+<div id="toast-bar" class="toast-notification">
+    <div id="toast-badge" class="toast-icon success">✓</div>
+    <span id="toast-message" class="toast-text">Success Message Triggered</span>
+</div>
+
 <div id="confirm-modal" class="modal-overlay">
     <div class="modal-box">
         <h4>Reset Local Database?</h4>
@@ -548,9 +499,6 @@
     </div>
 </div>
 
-<!-- TOASTS CONTAINER FOR SYSTEM MESSAGES -->
-<div id="toast-container" class="toast-container"></div>
-
 <div class="app-container">
 
     <!-- 1. DASHBOARD VIEW PANEL -->
@@ -560,7 +508,6 @@
         </div>
 
         <div class="dashboard-grid">
-            <!-- Tower A -->
             <div class="tower-card card-a" onclick="openWorkspace('towerA')">
                 <div>
                     <h3>Tower A</h3>
@@ -578,7 +525,6 @@
                 <button class="apple-action-btn">Expand</button>
             </div>
 
-            <!-- Tower B -->
             <div class="tower-card card-b" onclick="openWorkspace('towerB')">
                 <div>
                     <h3>Tower B</h3>
@@ -596,7 +542,6 @@
                 <button class="apple-action-btn">Expand</button>
             </div>
 
-            <!-- Tower C -->
             <div class="tower-card card-c" onclick="openWorkspace('towerC')">
                 <div>
                     <h3>Tower C</h3>
@@ -614,7 +559,6 @@
                 <button class="apple-action-btn">Expand</button>
             </div>
 
-            <!-- Tower D -->
             <div class="tower-card card-d" onclick="openWorkspace('towerD')">
                 <div>
                     <h3>Tower D</h3>
@@ -633,16 +577,12 @@
             </div>
         </div>
         
-        <!-- UTILITY CONTROL BUTTON GROUPS -->
         <div class="utility-footer">
             <div class="button-group">
                 <button class="excel-dl-btn" onclick="triggerExcelDownload()">Download Data (.xlsx)</button>
-                
-                <!-- STABLE IMPORT ELEMENT CONTROLS WITH NATIVE DIRECT TRIGGER -->
                 <button class="excel-import-btn" onclick="document.getElementById('excel-file-input').click()">Import Data (.xlsx)</button>
                 <input type="file" id="excel-file-input" accept=".xlsx, .xls" style="display: none;" onchange="handleExcelImport(event)">
             </div>
-            
             <button class="danger-reset-btn" onclick="openModal(event)">Reset Local Database</button>
         </div>
     </div>
@@ -662,7 +602,6 @@
             <button class="segment-btn" id="seg-towerD" onclick="switchTab('towerD')">Tower D</button>
         </div>
 
-        <!-- Panels with added Ceiling Area & changed Wall Area headers -->
         <div id="panel-towerA" class="panel-view">
             <div class="table-wrapper">
                 <table>
@@ -703,12 +642,11 @@
 </div>
 
 <script>
-    // STRUCTURAL SPATIAL MATRIX - Updated with Lobby A1+, Lobby A2+, Lobby B1+, Lobby B2+, Suites Lobby+, and Tower C/D modifications.
     const structuralData = {
         towerA: [
             { floor: "Ground", zones: ["Lobby A1", "Lobby A1+", "Lobby A2", "Lobby A2+", "Lift Lobby A1/A2"] },
             { floor: "Upper Ground", zones: ["Lounge A1", "Lounge A2", "Lift Lobby A1/A2"] },
-            { floor: "Level 2", zones: ["Suites Lobby", "Suites Lobby+", "Lift Lobby"] }, // Level 2 gets Suites Lobby+
+            { floor: "Level 2", zones: ["Suites Lobby", "Suites Lobby+", "Lift Lobby"] },
             { floor: "Level 3", zones: ["Suites Lobby", "Lift Lobby"] },
             { floor: "Level 6", zones: ["Fitness Center", "Banquet Gallery", "Entertainment Lounge", "Washroom (M)", "Washroom (F)", "Lift Lobby 6"] },
             { floor: "Level 40", zones: ["Sky Bar", "Dining Atelier", "Sky Gallery"] }
@@ -716,19 +654,19 @@
         towerB: [
             { floor: "Ground", zones: ["Lobby B1", "Lobby B1+", "Lobby B2", "Lobby B2+", "Lift Lobby B1/B2"] },
             { floor: "Upper Ground", zones: ["Lounge B1", "Lounge B2", "Lift Lobby B1/B2"] },
-            { floor: "Level 2", zones: ["Suites Lobby", "Suites Lobby+", "Lift Lobby"] }, // Level 2 gets Suites Lobby+
+            { floor: "Level 2", zones: ["Suites Lobby", "Suites Lobby+", "Lift Lobby"] },
             { floor: "Level 3", zones: ["Suites Lobby", "Lift Lobby"] },
             { floor: "Level 6", zones: ["Guest Reception Hall", "Lift Lobby 6F", "Conference Rooms", "Entry Hall", "Office", "Co-Working Lounge", "Toilet 3 (M)", "Toilet 3 (F)", "Fitness Studio", "Concept Dining"] },
             { floor: "Level 40", zones: ["Sky Bar", "Dining Atelier", "Sky Gallery"] }
         ],
         towerC: [
-            { floor: "Upper Ground", zones: ["Lobby C", "Lobby C+", "Lift Lobby C"] }, // Tower C Lobby C+ addition
+            { floor: "Upper Ground", zones: ["Lobby C", "Lobby C+", "Lift Lobby C"] },
             { floor: "Level 1", zones: ["Lounge", "Lift Lobby"] },
             { floor: "Level 9", zones: ["Garden Gallery", "Fitness Centre", "Toilet (M)", "Toilet (F)", "Lift Lobby", "River View Lounge"] },
             { floor: "Level 40", zones: ["Quiet Lounge"] }
         ],
         towerD: [
-            { floor: "Upper Ground", zones: ["Lobby D", "Lobby D+", "Lift Lobby D"] }, // Tower D Lobby D+ addition
+            { floor: "Upper Ground", zones: ["Lobby D", "Lobby D+", "Lift Lobby D"] },
             { floor: "Level 9", zones: ["Courtyard Gallery", "Board Room", "Lift Lobby", "Toilet (M)", "Toilet (F)", "Fitness Studio", "Business Clb", "Grand Dining"] }
         ]
     };
@@ -736,33 +674,19 @@
     const nameMapping = { towerA: "Tower A", towerB: "Tower B", towerC: "Tower C", towerD: "Tower D" };
     const reverseMapping = { "Tower A": "towerA", "Tower B": "towerB", "Tower C": "towerC", "Tower D": "towerD" };
 
-    // Storage version bumped to v6 to gracefully rebuild layout maps without referencing legacy structural index row configurations.
+    // Storage update safely isolated from old v5 structural data configuration maps
     let db = JSON.parse(localStorage.getItem('VCalculatorData_v6')) || {};
+
+    function triggerToast(message) {
+        const bar = document.getElementById("toast-bar");
+        document.getElementById("toast-message").innerText = message;
+        bar.classList.add("show");
+        setTimeout(() => { bar.classList.remove("show"); }, 3500);
+    }
 
     function saveToStorage() {
         localStorage.setItem('VCalculatorData_v6', JSON.stringify(db));
         updateDashboardMetrics();
-    }
-
-    // Custom non-blocking Toast UI elements instead of native browser warnings/alerts
-    function showNotification(message, type = 'success') {
-        const container = document.getElementById('toast-container');
-        const toast = document.createElement('div');
-        toast.className = `toast toast-${type}`;
-        
-        const icon = type === 'success' ? '✓' : '⚡';
-        toast.innerHTML = `
-            <span style="font-size: 1.1rem; color: ${type === 'success' ? '#34c759' : '#ff3b30'}">${icon}</span>
-            <span>${message}</span>
-        `;
-        
-        container.appendChild(toast);
-        setTimeout(() => toast.classList.add('show'), 40);
-        
-        setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => toast.remove(), 400);
-        }, 4000);
     }
 
     function initTables() {
@@ -784,7 +708,6 @@
                     const record = db[towerKey][rowId];
                     const tr = document.createElement("tr");
 
-                    // Set dynamic floor-row-last class on the final zone row of each floor level
                     if (index === group.zones.length - 1) {
                         tr.classList.add("floor-row-last");
                     }
@@ -880,7 +803,7 @@
         });
 
         XLSX.writeFile(wb, "V_Calculator_Spatial_Data.xlsx");
-        showNotification("Excel workbook generated and downloaded successfully!", "success");
+        triggerToast("Data template file downloaded successfully!");
     }
 
     function handleExcelImport(event) {
@@ -941,10 +864,10 @@
                 db = { ...db, ...newlyParsedDb };
                 saveToStorage();
                 initTables();
-                showNotification("Excel spatial records loaded and synced successfully!", "success");
+                triggerToast("Excel files synced successfully!");
             } catch (error) {
                 console.error(error);
-                showNotification("Error parsing workbook. Verify file layout structure.", "error");
+                triggerToast("Error loading document matrix structure template mapping.");
             }
             event.target.value = "";
         };
@@ -982,16 +905,14 @@
         e.stopPropagation();
         document.getElementById("confirm-modal").style.display = "flex";
     }
-    
     function closeModal() {
         document.getElementById("confirm-modal").style.display = "none";
     }
-    
     function executePurge() {
         db = {};
         localStorage.removeItem('VCalculatorData_v6');
         initTables();
-        showNotification("Local database successfully cleared.", "success");
+        triggerToast("Database completely purged.");
     }
 
     window.onload = initTables;
