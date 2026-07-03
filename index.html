@@ -486,6 +486,48 @@
         .btn-destructive { background: #ff3b30; color: white; }
         .btn-download-option { background: #34c759; color: white; }
         .btn-cancel { background: #f5f5f7; color: #000; }
+
+        /* Custom Elegant Toast Notifications Container */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 10001;
+            pointer-events: none;
+        }
+        .toast {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            padding: 14px 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: auto;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #000000;
+            border-left: 4px solid #000;
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .toast-success {
+            border-left-color: #34c759;
+        }
+        .toast-error {
+            border-left-color: #ff3b30;
+        }
     </style>
 </head>
 <body>
@@ -505,6 +547,9 @@
         </div>
     </div>
 </div>
+
+<!-- TOASTS CONTAINER FOR SYSTEM MESSAGES -->
+<div id="toast-container" class="toast-container"></div>
 
 <div class="app-container">
 
@@ -658,31 +703,32 @@
 </div>
 
 <script>
+    // STRUCTURAL SPATIAL MATRIX - Updated with Lobby A1+, Lobby A2+, Lobby B1+, Lobby B2+, Suites Lobby+, and Tower C/D modifications.
     const structuralData = {
         towerA: [
-            { floor: "Ground", zones: ["Lobby A1", "Lobby A2", "Lift Lobby A1/A2"] },
+            { floor: "Ground", zones: ["Lobby A1", "Lobby A1+", "Lobby A2", "Lobby A2+", "Lift Lobby A1/A2"] },
             { floor: "Upper Ground", zones: ["Lounge A1", "Lounge A2", "Lift Lobby A1/A2"] },
-            { floor: "Level 2", zones: ["Suites Lobby", "Lift Lobby"] },
+            { floor: "Level 2", zones: ["Suites Lobby", "Suites Lobby+", "Lift Lobby"] }, // Level 2 gets Suites Lobby+
             { floor: "Level 3", zones: ["Suites Lobby", "Lift Lobby"] },
             { floor: "Level 6", zones: ["Fitness Center", "Banquet Gallery", "Entertainment Lounge", "Washroom (M)", "Washroom (F)", "Lift Lobby 6"] },
             { floor: "Level 40", zones: ["Sky Bar", "Dining Atelier", "Sky Gallery"] }
         ],
         towerB: [
-            { floor: "Ground", zones: ["Lobby B1", "Lobby B2", "Lift Lobby B1/B2"] },
+            { floor: "Ground", zones: ["Lobby B1", "Lobby B1+", "Lobby B2", "Lobby B2+", "Lift Lobby B1/B2"] },
             { floor: "Upper Ground", zones: ["Lounge B1", "Lounge B2", "Lift Lobby B1/B2"] },
-            { floor: "Level 2", zones: ["Suites Lobby", "Lift Lobby"] },
+            { floor: "Level 2", zones: ["Suites Lobby", "Suites Lobby+", "Lift Lobby"] }, // Level 2 gets Suites Lobby+
             { floor: "Level 3", zones: ["Suites Lobby", "Lift Lobby"] },
             { floor: "Level 6", zones: ["Guest Reception Hall", "Lift Lobby 6F", "Conference Rooms", "Entry Hall", "Office", "Co-Working Lounge", "Toilet 3 (M)", "Toilet 3 (F)", "Fitness Studio", "Concept Dining"] },
             { floor: "Level 40", zones: ["Sky Bar", "Dining Atelier", "Sky Gallery"] }
         ],
         towerC: [
-            { floor: "Upper Ground", zones: ["Lobby C", "Lift Lobby C"] },
+            { floor: "Upper Ground", zones: ["Lobby C", "Lobby C+", "Lift Lobby C"] }, // Tower C Lobby C+ addition
             { floor: "Level 1", zones: ["Lounge", "Lift Lobby"] },
             { floor: "Level 9", zones: ["Garden Gallery", "Fitness Centre", "Toilet (M)", "Toilet (F)", "Lift Lobby", "River View Lounge"] },
             { floor: "Level 40", zones: ["Quiet Lounge"] }
         ],
         towerD: [
-            { floor: "Upper Ground", zones: ["Lobby D", "Lift Lobby D"] },
+            { floor: "Upper Ground", zones: ["Lobby D", "Lobby D+", "Lift Lobby D"] }, // Tower D Lobby D+ addition
             { floor: "Level 9", zones: ["Courtyard Gallery", "Board Room", "Lift Lobby", "Toilet (M)", "Toilet (F)", "Fitness Studio", "Business Clb", "Grand Dining"] }
         ]
     };
@@ -690,11 +736,33 @@
     const nameMapping = { towerA: "Tower A", towerB: "Tower B", towerC: "Tower C", towerD: "Tower D" };
     const reverseMapping = { "Tower A": "towerA", "Tower B": "towerB", "Tower C": "towerC", "Tower D": "towerD" };
 
-    let db = JSON.parse(localStorage.getItem('VCalculatorData_v5')) || {};
+    // Storage version bumped to v6 to gracefully rebuild layout maps without referencing legacy structural index row configurations.
+    let db = JSON.parse(localStorage.getItem('VCalculatorData_v6')) || {};
 
     function saveToStorage() {
-        localStorage.setItem('VCalculatorData_v5', JSON.stringify(db));
+        localStorage.setItem('VCalculatorData_v6', JSON.stringify(db));
         updateDashboardMetrics();
+    }
+
+    // Custom non-blocking Toast UI elements instead of native browser warnings/alerts
+    function showNotification(message, type = 'success') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        
+        const icon = type === 'success' ? '✓' : '⚡';
+        toast.innerHTML = `
+            <span style="font-size: 1.1rem; color: ${type === 'success' ? '#34c759' : '#ff3b30'}">${icon}</span>
+            <span>${message}</span>
+        `;
+        
+        container.appendChild(toast);
+        setTimeout(() => toast.classList.add('show'), 40);
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 400);
+        }, 4000);
     }
 
     function initTables() {
@@ -812,6 +880,7 @@
         });
 
         XLSX.writeFile(wb, "V_Calculator_Spatial_Data.xlsx");
+        showNotification("Excel workbook generated and downloaded successfully!", "success");
     }
 
     function handleExcelImport(event) {
@@ -872,10 +941,10 @@
                 db = { ...db, ...newlyParsedDb };
                 saveToStorage();
                 initTables();
-                alert("Excel spatial records loaded and synced successfully!");
+                showNotification("Excel spatial records loaded and synced successfully!", "success");
             } catch (error) {
                 console.error(error);
-                alert("Error parsing document mapping. Please verify that you are importing an unmodified 'V Calculator' export file layout.");
+                showNotification("Error parsing workbook. Verify file layout structure.", "error");
             }
             event.target.value = "";
         };
@@ -913,13 +982,16 @@
         e.stopPropagation();
         document.getElementById("confirm-modal").style.display = "flex";
     }
+    
     function closeModal() {
         document.getElementById("confirm-modal").style.display = "none";
     }
+    
     function executePurge() {
         db = {};
-        localStorage.removeItem('VCalculatorData_v5');
+        localStorage.removeItem('VCalculatorData_v6');
         initTables();
+        showNotification("Local database successfully cleared.", "success");
     }
 
     window.onload = initTables;
